@@ -1,5 +1,5 @@
 normalize <- function(A, dim){
-# NORMALIZE makes the entries of a (multidimensional <= 2) array sum to 1.
+# normalize makes the entries of a (multidimensional <= 2) array sum to 1.
 
 # Input
   # A = Array to be normalized
