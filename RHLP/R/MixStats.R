@@ -51,7 +51,25 @@ MixStats <- setRefClass(
     # EStep
     #######
     EStep = function(mixModel, mixParam, phi, variance_type){
-      piik <- modele_logit(Winit,phi$phiW);
+      h_ig <<- modele_logit(mixParam$Wk, phi$phiW)
+      for (k in (1:K)){
+        muk <- phi$phiBeta%*%mixParam$betak[,k]
+        if (variance_type == variance_types$homoskedastic){
+          sigmak <-  mixParam$sigmak
+        }
+        else{
+          sigmak <- param.sigmak[k]
+        }
+        z <- ((mixModel$y-muk)^2)/sigmak;
+        log_piik_fik[,k] <<- log(h_ig[,k]) -0.5*ones(mixModel$m,1)*(log(2*pi)+log(sigmak)) - 0.5*z
+      }
+      log_piik_fik <<- pmax(log_piik_fik, log(.Machine$double.xmin))
+      piik_fik <- exp(log_piik_fik);
+      fxi <- rowSums(piik_fik);
+      log_fxi <- log(fxi);
+      log_sum_piik_fik <- log(rowSums(piik_fik));
+      log_tik <- log_piik_fik - log_sum_piik_fik%*%ones(1,mixModel$K);
+      tik <- normalize(exp(log_tik),2);
     }
   )
 )
