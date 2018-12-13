@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1544719649186.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3828678226",
+    "id" : "6A52F46B",
+    "lastKnownWriteTime" : 1544730706,
+    "last_content_update" : 1544730706355,
+    "path" : "~/Documents/git/RHLP_R/RHLP/R/MixStats.R",
+    "project_path" : "R/MixStats.R",
+    "properties" : {
+        "cursorPosition" : "70,16",
+        "scrollLine" : "64"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
