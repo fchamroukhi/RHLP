@@ -14,6 +14,7 @@ MyData <- setRefClass(
     setDataFromMat = function(fileName){
       library(R.matlab)
       data <- readMat(fileName)
+      #construction des matrices de regression
       x <<- data$x
       y <<- data$y
 

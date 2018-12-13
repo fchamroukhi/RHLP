@@ -1,6 +1,9 @@
+rm(list = ls())
 source("R/dataset.R")
 source("R/enums.R")
 source("R/ModelOptions.R")
+source("R/MixModel.R")
+source("R/Phi.R")
 
 testLoadDataFromMat <- function(){
   library(R.matlab)
@@ -20,3 +23,33 @@ testModelOptions <- function(){
   mixOptions <- ModelOptions(n_tries, max_iter, threshold, verbose, verbose_IRLS, variance_types$homoskedastic)
 }
 testModelOptions()
+
+testModel <- function(){
+  library(R.matlab)
+  fileName = "data/simulated_time_series.mat"
+  data <- MyData$new()
+  data$setDataFromMat(fileName)
+
+  K <- 3; #nombre de regimes
+  p <- 1; #dimension de beta (ordre de reg polynomiale)
+  q <- 1; #dimension de w (ordre de reg logistique)
+  mix <- MixModel(data,K,p,q)
+}
+testModel()
+
+testPhi <- function(){
+  library(R.matlab)
+  fileName = "data/simulated_time_series.mat"
+  data <- MyData$new()
+  data$setDataFromMat(fileName)
+
+  K <- 3; #nombre de regimes
+  p <- 1; #dimension de beta (ordre de reg polynomiale)
+  q <- 1; #dimension de w (ordre de reg logistique)
+  model <- MixModel(data,K,p,q)
+
+  phi <- Phi$new()
+  phi$setPhi1(model$x,model$p,model$q)
+  return(phi)
+}
+phi <- testPhi()
