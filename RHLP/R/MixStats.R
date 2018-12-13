@@ -4,6 +4,7 @@ MixStats <- setRefClass(
     h_ig = "matrix", # post probabilities            piik in the matlab code of RHLP
     klas = "matrix",
     # pi_jgk = "matrix",
+    nu="numeric",
     Ex = "matrix",
     log_lik="numeric",
     com_loglik="numeric",
@@ -50,7 +51,7 @@ MixStats <- setRefClass(
     # EStep
     #######
     EStep = function(mixModel, mixParam, phi, variance_type){
-
+      piik <- modele_logit(Winit,phi$phiW);
     }
   )
 )
@@ -72,7 +73,13 @@ MixStats<-function(mixModel, options){
   tik <- matrix(0, mixModel$m, mixModel$K)
   polynomials <- matrix(NA, mixModel$m, mixModel$K)
   weighted_polynomials <- matrix(NA, mixModel$m, mixModel$K)
-
-  new("MixStats", h_ig=h_ig, klas=klas, Ex=Ex, log_lik=log_lik, com_loglik=com_loglik, stored_loglik=stored_loglik, stored_com_loglik=stored_com_loglik, BIC=BIC, ICL=ICL, AIC=AIC, cpu_time=cpu_time,
+  #number of free model parameters
+  if (options$variance_type == variance_types$homoskedastic){
+    nu <<- (mixModel$p+mixModel$q+3)*mixModel$K-(mixModel$q+1) - (mixModel$K-1)
+  }
+  else{
+    nu <<- (mixModel$p+mixModel$q+3)*mixModel$K-(mixModel$q+1)
+  }
+  new("MixStats", h_ig=h_ig, klas=klas, nu=nu, Ex=Ex, log_lik=log_lik, com_loglik=com_loglik, stored_loglik=stored_loglik, stored_com_loglik=stored_com_loglik, BIC=BIC, ICL=ICL, AIC=AIC, cpu_time=cpu_time,
       log_piik_fik=log_piik_fik, tik=tik, polynomials=polynomials, weighted_polynomials=weighted_polynomials)
 }
