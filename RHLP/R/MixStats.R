@@ -2,6 +2,7 @@ MixStats <- setRefClass(
   "MixStats",
   fields = list(
     h_ig = "matrix", # post probabilities            piik in the matlab code of RHLP
+    z_ik = "matrix", # c_ig in MIX_RHLP
     klas = "matrix",
     # pi_jgk = "matrix",
     nu="numeric",
@@ -15,6 +16,7 @@ MixStats <- setRefClass(
     AIC="numeric",
     cpu_time = "numeric",
     log_piik_fik="matrix",
+    log_sum_piik_fik = "matrix",
     tik="matrix",
     polynomials="matrix",
     weighted_polynomials="matrix"
@@ -40,13 +42,41 @@ MixStats <- setRefClass(
       K <- ncol(h_ig)
       ikmax <- max.col(h_ig)
       ikmax <- matrix(ikmax, ncol = 1)
-      c_ig <- ikmax%*%ones(1,K) == ones(N,1)%*%(1:K) # partition_MAP
+      z_ik <<- ikmax%*%ones(1,K) == ones(N,1)%*%(1:K) # partition_MAP
       klas <<- ones(N,1)
       for (k in 1:K){
-        klas[c_ig[,k]==1] <<- k
+        klas[z_ik[,k]==1] <<- k
       }
     },
+    #######
+    # compute loglikelihood
+    #######
+    computeLikelihood = function(reg_irls){
+      log_lik <<- sum(log_sum_piik_fik) + reg_irls;
+    },
+    #######
+    #
+    #######
+    #######
+    # compute the final solution stats
+    #######
+    computeStats = function(mixModel, mixParam, phi, cpu_time_all){
+      polynomials <<- phi$phiBeta %*% mixParam$betak
+      weighted_polynomials <<- h_ig * polynomials
+      Ex <<- matrix(rowSums(weighted_polynomials))
 
+      cpu_time <<- mean(cpu_time_all)
+      Psi <- c(as.vector(mixParam$Wk), as.vector(mixParam$betak), as.vector(mixParam$sigmak))
+      BIC <<- log_lik - (nu*log(mixModel$m)/2)
+      AIC <<- log_lik - nu
+
+
+      zik_log_alphag_fg_xij <- (z_ik)*(log_piik_fik);
+      com_loglik <<- sum(rowSums(zik_log_alphag_fg_xij));
+
+      ICL <<- com_loglik - nu*log(mixModel$m)/2;
+
+    },
     #######
     # EStep
     #######
@@ -69,7 +99,7 @@ MixStats <- setRefClass(
       piik_fik <- exp(log_piik_fik)
       fxi <- rowSums(piik_fik)
       log_fxi <- log(fxi)
-      log_sum_piik_fik <- log(rowSums(piik_fik))
+      log_sum_piik_fik <<- matrix(log(rowSums(piik_fik)))
       log_tik <- log_piik_fik - log_sum_piik_fik%*%ones(1,mixModel$K)
       tik <<- normalize(exp(log_tik),2)$M
     }
@@ -79,6 +109,7 @@ MixStats <- setRefClass(
 
 MixStats<-function(mixModel, options){
   h_ig <- matrix(NA,mixModel$m, mixModel$K)
+  z_ik <- matrix(NA,mixModel$m, mixModel$K)
   klas <- matrix(NA, mixModel$m, 1)
   Ex <- matrix(NA,mixModel$m, 1)
   log_lik <- -Inf
@@ -90,6 +121,7 @@ MixStats<-function(mixModel, options){
   AIC <- -Inf
   cpu_time <- Inf
   log_piik_fik <- matrix(0, mixModel$m, mixModel$K)
+  log_sum_piik_fik <- matrix(NA,mixModel$m, 1)
   tik <- matrix(0, mixModel$m, mixModel$K)
   polynomials <- matrix(NA, mixModel$m, mixModel$K)
   weighted_polynomials <- matrix(NA, mixModel$m, mixModel$K)
@@ -100,6 +132,6 @@ MixStats<-function(mixModel, options){
   else{
     nu <<- (mixModel$p+mixModel$q+3)*mixModel$K-(mixModel$q+1)
   }
-  new("MixStats", h_ig=h_ig, klas=klas, nu=nu, Ex=Ex, log_lik=log_lik, com_loglik=com_loglik, stored_loglik=stored_loglik, stored_com_loglik=stored_com_loglik, BIC=BIC, ICL=ICL, AIC=AIC, cpu_time=cpu_time,
-      log_piik_fik=log_piik_fik, tik=tik, polynomials=polynomials, weighted_polynomials=weighted_polynomials)
+  new("MixStats", h_ig=h_ig, z_ik=z_ik, klas=klas, nu=nu, Ex=Ex, log_lik=log_lik, com_loglik=com_loglik, stored_loglik=stored_loglik, stored_com_loglik=stored_com_loglik, BIC=BIC, ICL=ICL, AIC=AIC, cpu_time=cpu_time,
+      log_piik_fik=log_piik_fik, log_sum_piik_fik = log_sum_piik_fik, tik=tik, polynomials=polynomials, weighted_polynomials=weighted_polynomials)
 }
