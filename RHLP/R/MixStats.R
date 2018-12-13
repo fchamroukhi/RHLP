@@ -49,7 +49,6 @@ MixStats <- setRefClass(
     #######
     # EStep
     #######
-
     EStep = function(mixModel, mixParam, phi, variance_type){
 
     }
