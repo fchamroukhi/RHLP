@@ -4,43 +4,41 @@ source("R/utils.R")
 MixParam <- setRefClass(
   "MixParam",
   fields = list(
-    Wk = "array",
-    betak = "array",
-    sigmak = "matrix",
-    piik = "array"
+    Wk = "matrix",
+    betak = "matrix",
+    sigmak = "matrix"
   ),
   methods = list(
 
-    # y,K,XBeta,type_variance, try_EM
-    initRegressionParam = function(Xg, g, K, p, phiBeta, variance_type, try_algo){
-       n <- nrow(Xg)
-       m <- ncol(Xg)
+    #
+    initParam = function(mix, phi, mixOptions, try_algo = 1){
+      y<-mix$y
+      K<-mix$K
+      variance_type <-mixOptions$variance_type
+      p<- mix$p
+       m <- length(y)
        if (try_algo==1){
           # decoupage de l'echantillon (signal) en K segments
           zi <- round(m/K)-1
 
-          beta_k <- matrix(NA, p+1, K)
-          sigma <- c()
+          betak <<- matrix(NA, p+1, K)
+
 
           for (k in 1:K){
             i <- (k-1)*zi+1
             j <- k*zi
-            Xij <- Xg[,i:j]
-            Xij <- matrix(t(Xij), ncol = 1)
-            phi_ij <- phiBeta[i:j,]
-            Phi_ij <- repmat(phi_ij,n,1)
+            yij <- y[i:j]
+            yij <- matrix(t(yij), ncol = 1)
+            Phi_ij <- phi$phiBeta[i:j,]
 
-            bk <- solve(t(Phi_ij)%*%Phi_ij)%*%t(Phi_ij)%*%Xij
-            beta_k[,k] <- bk
+            bk <- solve(t(Phi_ij)%*%Phi_ij)%*%t(Phi_ij)%*%yij
+            betak[,k] <<- bk
 
-            if (variance_type == variance_types$common){
-              sigma <- var(Xij)
+            if (variance_type == variance_types$homoskedastic){
+              sigmak <<- matrix(1)
             }
             else{
-              mk <- j-i+1 #length(Xij);
-              z <- Xij - Phi_ij %*% bk;
-              sk <- t(z) %*% z/(n*mk);
-              sigma[k] <- sk;
+              sigmak[k] <<- var(yij)
             }
           }
        }
@@ -57,37 +55,24 @@ MixParam <- setRefClass(
          tk_init[K+1] <- m
 
          beta_k <- matrix(NA, p+1, K)
-         sigma <- c()
+         sigmak <<- c()
          for (k in 1:K){
            i <- tk_init[k] + 1
            j <- tk_init[k+1]
-           Xij <- Xg[,i:j]
-           Xij <- matrix(t(Xij), ncol = 1)
-           phi_ij <- phiBeta[i:j,]
-           Phi_ij <- repmat(phi_ij,n,1)
+           yij <- y[,i:j]
+           yij <- matrix(t(yij), ncol = 1)
+           Phi_ij <- phi$phiBeta[i:j,]
 
+           bk <- solve(t(Phi_ij)%*%Phi_ij)%*%t(Phi_ij)%*%yij
+           betak[,k] <<- bk
 
-           bk <- solve(t(Phi_ij)%*%Phi_ij)%*%t(Phi_ij)%*%Xij
-           beta_k[,k] <- bk
-
-           if (variance_type == variance_types$common){
-             sigma <- var(Xij)
+           if (variance_type == variance_types$homoskedastic){
+             sigmak <<- var(y)
            }
            else{
-             mk <- j-i+1 #length(Xij);
-             z <- Xij - Phi_ij %*% bk;
-             sk <- t(z) %*% z/(n*mk);
-             sigma[k] <- sk;
+             sigmak[k] <<- matrix(1);
            }
          }
-       }
-
-       betag[,,g] <<- beta_k
-       if (variance_type == variance_types$common){
-         sigmag[g] <<- sigma
-       }
-       else{
-         sigmag[,g] <<- sigma
        }
     }
 
@@ -98,14 +83,14 @@ MixParam <- setRefClass(
 
 MixParam<-function(mixModel, options){
   #mixModel <- mixModel
-  Wk <- array(0,dim=c(mixModel$q+1, mixModel$K-1, mixModel$G))
-  betak <- array(NA, dim=c(mixModel$p+1, mixModel$K, mixModel$G))
+  Wk <- matrix(0,mixModel$p+1, mixModel$K)
+  betak <- matrix(NA, mixModel$p+1, mixModel$K)
   if (options$variance_type == variance_types$homoskedastic){
-    sigmak <- matrix(NA, mixModel$G)
+    # todo: verify the dimensions
+    sigmak <- matrix(NA, mixModel$K)
   }
   else{
-    sigmak <- matrix(NA, mixModel$K, mixModel$G)
+    sigmak <- matrix(NA, mixModel$K)
   }
-  piik <- array(0, dim=c(mixModel$m*mixModel$n, mixModel$K, mixModel$G))
-  new("MixParam", Wk=Wk, betak=betak, sigmak=sigmak, piik=piik)#, mixModel = mixModel)
+  new("MixParam", Wk=Wk, betak=betak, sigmak=sigmak)#, mixModel = mixModel)
 }
