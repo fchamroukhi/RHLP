@@ -4,11 +4,10 @@ source("R/utils.R")
 MixParam <- setRefClass(
   "MixParam",
   fields = list(
-    Wg = "array",
-    betag = "array",
-    sigmag = "matrix",
-    pi_jgk = "array",
-    alpha_g = "matrix"
+    Wk = "array",
+    betak = "array",
+    sigmak = "matrix",
+    piik = "array"
   ),
   methods = list(
 
@@ -99,15 +98,14 @@ MixParam <- setRefClass(
 
 MixParam<-function(mixModel, options){
   #mixModel <- mixModel
-  Wg <- array(0,dim=c(mixModel$q+1, mixModel$K-1, mixModel$G))
-  betag <- array(NA, dim=c(mixModel$p+1, mixModel$K, mixModel$G))
-  if (options$variance_type == variance_types$common){
-    sigmag <- matrix(NA, mixModel$G)
+  Wk <- array(0,dim=c(mixModel$q+1, mixModel$K-1, mixModel$G))
+  betak <- array(NA, dim=c(mixModel$p+1, mixModel$K, mixModel$G))
+  if (options$variance_type == variance_types$homoskedastic){
+    sigmak <- matrix(NA, mixModel$G)
   }
   else{
-    sigmag <- matrix(NA, mixModel$K, mixModel$G)
+    sigmak <- matrix(NA, mixModel$K, mixModel$G)
   }
-  pi_jgk <- array(0, dim=c(mixModel$m*mixModel$n, mixModel$K, mixModel$G))
-  alpha_g <- matrix(NA, mixModel$G)
-  new("MixParam", Wg=Wg, betag=betag, sigmag=sigmag, pi_jgk=pi_jgk, alpha_g=alpha_g)#, mixModel = mixModel)
+  piik <- array(0, dim=c(mixModel$m*mixModel$n, mixModel$K, mixModel$G))
+  new("MixParam", Wk=Wk, betak=betak, sigmak=sigmak, piik=piik)#, mixModel = mixModel)
 }
