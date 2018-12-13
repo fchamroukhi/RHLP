@@ -55,11 +55,11 @@ MixParam <- setRefClass(
         tk_init[mix$K+1] <- m
 
         beta_k <- matrix(NA, mix$p+1, mix$K)
-        sigmak <<- c()
+
         for (k in 1:mix$K){
           i <- tk_init[k] + 1
           j <- tk_init[k+1]
-          yij <- mix$y[,i:j]
+          yij <- mix$y[i:j]
           yij <- matrix(t(yij), ncol = 1)
           Phi_ij <- phi$phiBeta[i:j,]
 
@@ -67,10 +67,10 @@ MixParam <- setRefClass(
           betak[,k] <<- bk
 
           if (mixOptions$variance_type == variance_types$homoskedastic){
-            sigmak <<- var(y)
+            sigmak <<- var(mix$y)
           }
           else{
-            sigmak[k] <<- matrix(1);
+            sigmak[k] <<- 1
           }
         }
       }
