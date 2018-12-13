@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1544720048463.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "132305199",
+    "id" : "707DD78",
+    "lastKnownWriteTime" : 1544730853,
+    "last_content_update" : 1544730853030,
+    "path" : "~/Documents/git/RHLP_R/RHLP/R/MixParam.R",
+    "project_path" : "R/MixParam.R",
+    "properties" : {
+        "cursorPosition" : "79,0",
+        "scrollLine" : "69"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

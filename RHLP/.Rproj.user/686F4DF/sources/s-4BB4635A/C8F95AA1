@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1544719652526.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "C8F95AA1",
+    "lastKnownWriteTime" : 1544708823,
+    "last_content_update" : 1544708823,
+    "path" : "~/Documents/git/RHLP_R/RHLP/R/dataset.R",
+    "project_path" : "R/dataset.R",
+    "properties" : {
+        "cursorPosition" : "22,7",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
