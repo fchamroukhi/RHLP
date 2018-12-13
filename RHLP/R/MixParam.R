@@ -74,6 +74,10 @@ MixParam <- setRefClass(
           }
         }
       }
+    },
+
+    MStep = function(mixModel, mixStats, phi, mixOptions){
+
     }
   )
 )
