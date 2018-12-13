@@ -11,7 +11,11 @@ MixParam <- setRefClass(
   methods = list(
     initParam = function(mix, phi, mixOptions, try_algo = 1){
       m <- length(mix$y)
+
       if (try_algo==1){
+        #Initialization of W
+        Wk <<- zeros(mix$q+1,mix$K-1)
+
         # decoupage de l'echantillon (signal) en K segments
         zi <- round(m/mix$K)-1
 
@@ -36,6 +40,9 @@ MixParam <- setRefClass(
         }
       }
       else{ # initialisation aléatoire
+        #Initialization of W
+        Wk <<- rand(mix$q+1,mix$K-1)
+
         Lmin <- round(m/(mix$K+1)) #nbr pts min dans un segments
         tk_init <- zeros(1,mix$K+1)
         K_1 <- mix$K
@@ -73,7 +80,7 @@ MixParam <- setRefClass(
 
 MixParam<-function(mixModel, options){
   #mixModel <- mixModel
-  Wk <- matrix(0,mixModel$p+1, mixModel$K)
+  Wk <- matrix(0,mixModel$p+1, mixModel$K-1)
   betak <- matrix(NA, mixModel$p+1, mixModel$K)
   if (options$variance_type == variance_types$homoskedastic){
     # todo: verify the dimensions
