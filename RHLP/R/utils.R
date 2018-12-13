@@ -61,3 +61,151 @@ normalize <- function(A, dim){
   output = list("M" = M, "z" = z)
   return(output)
 }
+
+
+IRLS_MixFRHLP <- function(tauijk, phiW, Wg_init=NULL, cluster_weights=NULL, verbose_IRLS=FALSE, piik_len = NULL){
+  K <- ncol(tauijk)
+  n <- nrow(phiW)
+  q <- ncol(phiW)
+
+  if (K==1){
+    W <- matrix( nrow = (q+1), ncol = 0)
+    piik <- ones(piik_len, 1)
+    reg_irls <- 0
+    LL <- 0
+    loglik <- 0
+    return(list(W, piik, reg_irls, LL, loglik))
+  }
+
+  if (is.null(Wg_init)){
+    Wg_init <- zeros(q,K-1)
+  }
+  lambda <- 1e-9
+  I <- diag(q*(K-1))
+
+
+  #Initialisation du IRLS (iter = 0)
+  W_old <- Wg_init
+
+  problik <- modele_logit(W_old, phiW, tauijk, cluster_weights)
+  piik_old <- problik[[1]]
+  loglik_old <- problik[[2]]
+
+  loglik_old <- loglik_old - lambda * norm(as.vector(W_old),"2")^2
+  iter <- 0
+  converge <- FALSE
+  max_iter <- 300
+  LL <- c()
+  if (verbose_IRLS){
+    message("IRLS : Iteration ", iter, "Log-likehood : ", loglik_old)
+  }
+
+  while(!converge && (iter<max_iter)){
+    #Hw_old matrice carree de dimensions hx x hx
+    hx <- q*(K-1)
+    Hw_old <- zeros(hx,hx)
+    gw_old <- zeros(q,K-1)
+
+    #Gradient
+    for (k in 1:(K-1)){
+      if (is.null(cluster_weights)){
+        gwk <- tauijk[,k] - piik_old[,k]
+      }
+      else{
+        gwk <- cluster_weights*(tauijk[,k] - piik_old[,k])
+      }
+
+      for (qq in 1:q){
+        vq <- phiW[,qq]
+        gw_old[qq,k] <- t(gwk) %*% vq
+      }
+    }
+    gw_old <- matrix(gw_old, q*(K-1), 1)
+
+
+    #Hessienne
+    for (k in 1:(K-1)){
+      for (ell in 1:(K-1)){
+        delta_kl <- (k==ell)
+        if (is.null(cluster_weights)){
+          gwk <- piik_old[,k] * (ones(n,1)%*%delta_kl - piik_old[,ell])
+        }
+        else{
+          gwk <- cluster_weights * (piik_old[,k] * (ones(n,1)%*%delta_kl - piik_old[,ell]))
+        }
+
+        Hkl <- zeros(q,q)
+        for (qqa in 1:q){
+          vqa <- phiW[,qqa]
+          for (qqb in 1:q){
+            vqb <- phiW[, qqb]
+            hwk <- t(vqb) %*% (gwk * vqa)
+            Hkl[qqa,qqb] <- hwk
+          }
+        }
+        Hw_old[(((k-1)*q)+1) : (k*q), (((ell-1)*q)+1) : (ell*q)] <- -Hkl
+      }
+    }
+
+    # si a priori gaussien sur W (lambda ~ 1e-9)
+    Hw_old <- Hw_old + lambda*I
+    gw_old = gw_old - lambda*as.vector(W_old)
+
+    # Newton Raphson : W(c+1) = W(c) - H(W(c))^(-1)g(W(c))
+    w <- as.vector(W_old) - solve(Hw_old)%*%gw_old # [(q+1)x(K-1),1]
+    W <- matrix(w,q,(K-1)) #[(q+1)*(K-1)]
+
+    # mise a jour des probas et de la loglik
+    problik <- modele_logit(W, phiW, tauijk, cluster_weights)
+    piik <- problik[[1]]
+    loglik <- problik[[2]]
+    loglik <- loglik - lambda*(norm(as.vector(W_old),"2"))^2
+
+    # # Verifier si Qw1(w^(c+1),w^(c))> Qw1(w^(c),w^(c))
+    # #(adaptation) de Newton Raphson : W(c+1) = W(c) - pas*H(W)^(-1)*g(W)
+    # pas <- 1
+    # alpha <- 2
+    #
+    # while(loglik < loglik_old){
+    #   pas <- pas/alpha # pas d'adaptation de l'algo Newton raphson
+    #   #recalcul du parametre W et de la loglik
+    #   #Hw_old = Hw_old + lambda*I;
+    #   w <- as.vector(W_old) - pas * solve(Hw_old)%*%gw_old
+    #   W = matrix(w,q,K-1)
+    #   problik <- modele_logit(W, phiW, tauijk, cluster_weights)
+    #   piik <- problik[[1]]
+    #   loglik <- problik[[2]]
+    #   loglik <- loglik - lambda*(norm(as.vector(W_old),"2"))^2
+    # }
+
+    converge1 <- abs((loglik - loglik_old)/loglik_old) <= 1e-7
+    converge2 <- abs(loglik - loglik_old) <= 1e-6
+
+    converge <- converge1 | converge2
+
+    piik_old <- piik
+    W_old <- W
+    iter <- iter + 1
+    LL[iter] <- loglik_old
+    loglik_old <- loglik
+    if(verbose_IRLS){
+      message("IRLS: Iteration ", iter, "Log-likelihood: ", loglik_old)
+    }
+  }
+
+  if (converge){
+    if (verbose_IRLS){
+      message("IRLS : convergence  OK ; nbre d''iterations : ", iter)
+    }
+  }
+  else{
+    message("IRLS : pas de convergence (augmenter le nombre d''iterations > ", max_iter, ")")
+  }
+
+  reg_irls <- 0
+  if (lambda!=0){
+    reg_irls <- lambda * (norm(as.vector(W),"2"))^2
+  }
+
+  return(list(W, piik, reg_irls, LL, loglik))
+}
