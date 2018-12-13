@@ -77,7 +77,40 @@ MixParam <- setRefClass(
     },
 
     MStep = function(mixModel, mixStats, phi, mixOptions){
+      # M-Step
+      # Maximization w.r.t betak and sigmak (the variances)
+      if (mixOptions$variance_type == variance_types$homoskedastic) {s = 0}
+      for (k in 1:mixModel$K){
+        weights <- mixStats$tik[,k]; # post prob of each component k (dimension nx1)
+        nk <- sum(weights); # expected cardinal numnber of class k
 
+        Xk <- phi$phiBeta*(sqrt(weights)%*%ones(1,mixModel$p+1)); #[m*(p+1)]
+        yk <- mixModel$y*(sqrt(weights));# dimension :(nx1).*(nx1) = (nx1)
+
+        M <- t(Xk)%*%Xk
+        epps <- 1e-9
+        M <- M+epps*diag(mixModel$p+1);
+        betak[,k] <<- solve(M)%*%t(Xk)%*%yk # Maximization w.r.t betak
+        z <- sqrt(weights)*(mixModel$y-phi$phiBeta%*%betak[,k])
+        # Maximisation w.r.t sigmak (the variances)
+        priorsigma =  0; #1e-5;
+        if (mixOptions$variance_type == variance_types$homoskedastic){
+          sk <- t(z)%*%z
+          s <- s+sk;
+          sigmak <<- s/mixModel$m;
+        }else{
+          sigmak[k] <<- t(z)%*%z/nk  + priorsigma
+        }
+      }
+
+      # Maximization w.r.t W
+      # ----------------------------------%
+      #  IRLS : Iteratively Reweighted Least Squares (for IRLS, see the IJCNN 2009 paper)
+      res_irls <- IRLS_MixFRHLP(mixStats$tik, phi$phiW, Wk, verbose_IRLS = mixOptions$verbose_IRLS)
+
+      Wk <<- res_irls[[1]]
+      piik <- res_irls[[2]]
+      reg_irls <- res_irls[[3]]
     }
   )
 )
