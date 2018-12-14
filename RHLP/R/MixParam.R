@@ -43,18 +43,24 @@ MixParam <- setRefClass(
         #Initialization of W
         Wk <<- rand(mix$q+1,mix$K-1)
 
-        Lmin <- round(m/(mix$K+1)) #nbr pts min dans un segments
-        tk_init <- zeros(1,mix$K+1)
-        K_1 <- mix$K
-        for (k in 2:mix$K) {
-          K_1 <- K_1-1;
-          temp <- (tk_init[k-1] + Lmin) : (m - (K_1*Lmin))
-          ind <- sample(length(temp));
-          tk_init[k] <- temp[ind[1]]
+        Lmin <- 10 #round(m/(mix$K+1)) #nbr pts min dans un segments
+        tk_init <- zeros(mix$K, 1)
+        if (mix$K==1){
+          tk_init[2] = m
         }
-        tk_init[mix$K+1] <- m
+        else{
+          K_1 <- mix$K
+          for (k in 2:mix$K) {
+            K_1 <- K_1-1
+            temp <- (tk_init[k-1] + Lmin) : (m - (K_1*Lmin))
 
-        beta_k <- matrix(NA, mix$p+1, mix$K)
+            ind <- sample(length(temp));
+            tk_init[k] <- temp[ind[1]]
+          }
+          tk_init[mix$K+1] <- m
+        }
+
+        betak <<- matrix(NA, mix$p+1, mix$K)
 
         for (k in 1:mix$K){
           i <- tk_init[k] + 1

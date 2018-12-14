@@ -32,7 +32,6 @@ EM <- function(mixModel, modelOptions){
       mixStats$EStep(mixModel, mixParam, phi, modelOptions$variance_type)
 
       reg_irls <- mixParam$MStep(mixModel, mixStats, phi, modelOptions)
-
       mixStats$computeLikelihood(reg_irls)
       # FIN EM
 
