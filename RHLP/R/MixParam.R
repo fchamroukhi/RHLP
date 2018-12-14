@@ -106,7 +106,7 @@ MixParam <- setRefClass(
       # Maximization w.r.t W
       # ----------------------------------%
       #  IRLS : Iteratively Reweighted Least Squares (for IRLS, see the IJCNN 2009 paper)
-      res_irls <- IRLS_MixFRHLP(mixStats$tik, phi$phiW, Wk, verbose_IRLS = mixOptions$verbose_IRLS)
+      res_irls <- IRLS_MixFRHLP(mixStats$tik, phi$phiW, Wk, verbose_IRLS = mixOptions$verbose_IRLS, piik_len = mixModel$m)
 
       Wk <<- res_irls[[1]]
       piik <- res_irls[[2]]

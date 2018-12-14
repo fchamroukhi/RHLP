@@ -69,7 +69,7 @@ IRLS_MixFRHLP <- function(tauijk, phiW, Wg_init=NULL, cluster_weights=NULL, verb
   q <- ncol(phiW)
 
   if (K==1){
-    W <- matrix( nrow = (q+1), ncol = 0)
+    W <- matrix( nrow = q, ncol = 0)
     piik <- ones(piik_len, 1)
     reg_irls <- 0
     LL <- 0
@@ -249,6 +249,7 @@ modele_logit <- function(Wg, phiW, Y=NULL, Gamma=NULL){
   }
   else{
     wK <- zeros(q,1)
+    #print(Wg)
     Wg <- cbind(Wg, wK)
     q <- nrow(Wg)
     K <- ncol(Wg)
