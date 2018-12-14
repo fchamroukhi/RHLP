@@ -61,8 +61,15 @@ EM <- function(mixModel, modelOptions){
     if (mixStats$log_lik > best_loglik){
       mixStatsSolution <- mixStats$copy()
       mixParamSolution <- mixParam$copy()
-      mixStatsSolution$tik <- mixStats$tik[1:mixModel$m,]
-      mixStatsSolution$h_ig <- mixStats$h_ig[1:mixModel$m,]
+      if (mixModel$K==1){
+        mixStatsSolution$tik <- matrix(mixStats$tik, nrow = mixModel$m, ncol = 1)
+        mixStatsSolution$h_ig <- matrix(mixStats$h_ig, nrow = mixModel$m, ncol = 1)
+      }
+      else{
+        mixStatsSolution$tik <- mixStats$tik[1:mixModel$m,]
+        mixStatsSolution$h_ig <- mixStats$h_ig[1:mixModel$m,]
+      }
+
       best_loglik <- mixStats$log_lik
     }
     if (modelOptions$n_tries > 1){

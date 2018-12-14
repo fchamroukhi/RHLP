@@ -55,11 +55,11 @@ MixParam <- setRefClass(
         tk_init[mix$K+1] <- m
 
         beta_k <- matrix(NA, mix$p+1, mix$K)
-        sigmak <<- c()
+
         for (k in 1:mix$K){
           i <- tk_init[k] + 1
           j <- tk_init[k+1]
-          yij <- mix$y[,i:j]
+          yij <- mix$y[i:j]
           yij <- matrix(t(yij), ncol = 1)
           Phi_ij <- phi$phiBeta[i:j,]
 
@@ -67,10 +67,10 @@ MixParam <- setRefClass(
           betak[,k] <<- bk
 
           if (mixOptions$variance_type == variance_types$homoskedastic){
-            sigmak <<- var(y)
+            sigmak <<- var(mix$y)
           }
           else{
-            sigmak[k] <<- matrix(1);
+            sigmak[k] <<- 1
           }
         }
       }
@@ -106,7 +106,7 @@ MixParam <- setRefClass(
       # Maximization w.r.t W
       # ----------------------------------%
       #  IRLS : Iteratively Reweighted Least Squares (for IRLS, see the IJCNN 2009 paper)
-      res_irls <- IRLS_MixFRHLP(mixStats$tik, phi$phiW, Wk, verbose_IRLS = mixOptions$verbose_IRLS)
+      res_irls <- IRLS_MixFRHLP(mixStats$tik, phi$phiW, Wk, verbose_IRLS = mixOptions$verbose_IRLS, piik_len = mixModel$m)
 
       Wk <<- res_irls[[1]]
       piik <- res_irls[[2]]
