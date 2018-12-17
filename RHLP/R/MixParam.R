@@ -25,10 +25,10 @@ MixParam <- setRefClass(
           i <- (k-1)*zi+1
           j <- k*zi
           yij <- mix$y[i:j]
-          yij <- matrix(t(yij), ncol = 1)
+
           Phi_ij <- phi$phiBeta[i:j,]
 
-          bk <- solve(t(Phi_ij)%*%Phi_ij)%*%t(Phi_ij)%*%yij
+          bk <-  solve(t(Phi_ij)%*%Phi_ij)%*%t(Phi_ij)%*%yij
           betak[,k] <<- bk
 
           if (mixOptions$variance_type == variance_types$homoskedastic){
@@ -43,7 +43,7 @@ MixParam <- setRefClass(
         #Initialization of W
         Wk <<- rand(mix$q+1,mix$K-1)
 
-        Lmin <- 10 #round(m/(mix$K+1)) #nbr pts min dans un segments
+        Lmin <- round(m/(mix$K+1)) #nbr pts min dans un segments
         tk_init <- zeros(mix$K, 1)
         if (mix$K==1){
           tk_init[2] = m
@@ -51,7 +51,7 @@ MixParam <- setRefClass(
         else{
           K_1 <- mix$K
           for (k in 2:mix$K) {
-            K_1 <- K_1-1
+            K_1 <- (K_1-1)
             temp <- (tk_init[k-1] + Lmin) : (m - (K_1*Lmin))
 
             ind <- sample(length(temp));
@@ -61,14 +61,12 @@ MixParam <- setRefClass(
         }
 
         betak <<- matrix(NA, mix$p+1, mix$K)
-
         for (k in 1:mix$K){
           i <- tk_init[k] + 1
           j <- tk_init[k+1]
           yij <- mix$y[i:j]
-          yij <- matrix(t(yij), ncol = 1)
+          #yij <- matrix(t(yij), ncol = 1)
           Phi_ij <- phi$phiBeta[i:j,]
-
           bk <- solve(t(Phi_ij)%*%Phi_ij)%*%t(Phi_ij)%*%yij
           betak[,k] <<- bk
 
