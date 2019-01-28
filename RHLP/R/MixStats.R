@@ -61,7 +61,7 @@ MixStats <- setRefClass(
     # compute the final solution stats
     #######
     computeStats = function(mixModel, mixParam, phi, cpu_time_all){
-      polynomials <<- phi$phiBeta %*% mixParam$betak
+      polynomials <<- phi$XBeta %*% mixParam$betak
       weighted_polynomials <<- h_ig * polynomials
       Ex <<- matrix(rowSums(weighted_polynomials))
 
@@ -81,9 +81,9 @@ MixStats <- setRefClass(
     # EStep
     #######
     EStep = function(mixModel, mixParam, phi, variance_type){
-      h_ig <<- modele_logit(mixParam$Wk, phi$phiW)[[1]]
+      h_ig <<- modele_logit(mixParam$Wk, phi$Xw)[[1]]
       for (k in (1:K)){
-        muk <- phi$phiBeta%*%mixParam$betak[,k]
+        muk <- phi$XBeta%*%mixParam$betak[,k]
         if (variance_type == variance_types$homoskedastic){
           sigmak <-  mixParam$sigmak[1]
         }

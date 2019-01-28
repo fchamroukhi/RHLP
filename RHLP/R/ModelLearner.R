@@ -2,10 +2,10 @@ source("R/enums.R")
 source("R/utils.R")
 source("R/MixParam.R")
 source("R/MixStats.R")
-source("R/Phi.R")
+source("R/RegressionDesigner.R")
 
 EM <- function(mixModel, modelOptions){
-  phi <- Phi$new()
+  phi <- RegressionDesigner$new()
   phi$setPhi1(mixModel$x,mixModel$p,mixModel$q)
 
   top <- 0
@@ -21,7 +21,6 @@ EM <- function(mixModel, modelOptions){
     # Initializations
     mixParam <- MixParam(mixModel, modelOptions)
     mixParam$initParam(mixModel, phi, modelOptions, try_EM)
-
     iter <- 0
     converge <- FALSE
     prev_loglik <- -Inf

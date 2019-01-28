@@ -26,7 +26,7 @@ MixParam <- setRefClass(
           j <- k*zi
           yij <- mix$y[i:j]
 
-          Phi_ij <- phi$phiBeta[i:j,]
+          Phi_ij <- phi$XBeta[i:j,]
 
           bk <-  solve(t(Phi_ij)%*%Phi_ij)%*%t(Phi_ij)%*%yij
           betak[,k] <<- bk
@@ -66,7 +66,7 @@ MixParam <- setRefClass(
           j <- tk_init[k+1]
           yij <- mix$y[i:j]
           #yij <- matrix(t(yij), ncol = 1)
-          Phi_ij <- phi$phiBeta[i:j,]
+          Phi_ij <- phi$XBeta[i:j,]
           bk <- solve(t(Phi_ij)%*%Phi_ij)%*%t(Phi_ij)%*%yij
           betak[,k] <<- bk
 
@@ -88,14 +88,14 @@ MixParam <- setRefClass(
         weights <- mixStats$tik[,k]; # post prob of each component k (dimension nx1)
         nk <- sum(weights); # expected cardinal numnber of class k
 
-        Xk <- phi$phiBeta*(sqrt(weights)%*%ones(1,mixModel$p+1)); #[m*(p+1)]
+        Xk <- phi$XBeta*(sqrt(weights)%*%ones(1,mixModel$p+1)); #[m*(p+1)]
         yk <- mixModel$y*(sqrt(weights));# dimension :(nx1).*(nx1) = (nx1)
 
         M <- t(Xk)%*%Xk
         epps <- 1e-9
         M <- M+epps*diag(mixModel$p+1);
         betak[,k] <<- solve(M)%*%t(Xk)%*%yk # Maximization w.r.t betak
-        z <- sqrt(weights)*(mixModel$y-phi$phiBeta%*%betak[,k])
+        z <- sqrt(weights)*(mixModel$y-phi$XBeta%*%betak[,k])
         # Maximisation w.r.t sigmak (the variances)
         priorsigma =  0; #1e-5;
         if (mixOptions$variance_type == variance_types$homoskedastic){
@@ -110,7 +110,7 @@ MixParam <- setRefClass(
       # Maximization w.r.t W
       # ----------------------------------%
       #  IRLS : Iteratively Reweighted Least Squares (for IRLS, see the IJCNN 2009 paper)
-      res_irls <- IRLS_MixFRHLP(mixStats$tik, phi$phiW, Wk, verbose_IRLS = mixOptions$verbose_IRLS, piik_len = mixModel$m)
+      res_irls <- IRLS_MixFRHLP(mixStats$tik, phi$Xw, Wk, verbose_IRLS = mixOptions$verbose_IRLS, piik_len = mixModel$m)
 
       Wk <<- res_irls[[1]]
       piik <- res_irls[[2]]
