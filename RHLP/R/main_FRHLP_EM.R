@@ -5,6 +5,10 @@ source("R/ModelOptions.R")
 source("R/enums.R")
 source("R/ModelLearner.R")
 
+<<<<<<< Updated upstream
+=======
+#library(R.matlab)
+>>>>>>> Stashed changes
 fileName = "data/simulated_time_series.mat"
 mixData <- MyData$new()
 mixData$setDataFromMat(fileName)
@@ -25,6 +29,8 @@ modelOptions <- ModelOptions(n_tries, max_iter, threshold, verbose, verbose_IRLS
 ####
 
 solution <- EM(mixModel, modelOptions)
-#mixParamSolution <- solution[[1]]
-#mixStatsSolution <- solution[[2]]
+mixParamSolution <- solution[[1]]
+mixStatsSolution <- solution[[2]]
+
+#mixStatsSolution$showDataClusterSegmentation(mixModel, mixParamSolution)
 

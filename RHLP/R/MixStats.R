@@ -22,6 +22,7 @@ MixStats <- setRefClass(
     weighted_polynomials="matrix"
   ),
   methods=list(
+
     MAP = function(){
       "
       calcule une partition d'un echantillon par la regle du Maximum A Posteriori à partir des probabilites a posteriori
