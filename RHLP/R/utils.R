@@ -62,14 +62,55 @@ normalize <- function(A, dim){
   return(output)
 }
 
-
 IRLS_MixFRHLP <- function(tauijk, phiW, Wg_init=NULL, cluster_weights=NULL, verbose_IRLS=FALSE, piik_len = NULL){
+  "an efficient Iteratively Reweighted Least-Squares (IRLS) algorithm for estimating
+  the parameters of a multinomial logistic regression model given the
+  predictors X and a partition (hard or smooth) Tau into K>=2 segments,
+  and a cluster weights Gamma (hard or smooth)
+  %% References
+  % Please cite the following papers for this code:
+  %
+  %
+  % @INPROCEEDINGS{Chamroukhi-IJCNN-2009,
+  %   AUTHOR =       {Chamroukhi, F. and Sam\'e,  A. and Govaert, G. and Aknin, P.},
+  %   TITLE =        {A regression model with a hidden logistic process for feature extraction from time series},
+  %   BOOKTITLE =    {International Joint Conference on Neural Networks (IJCNN)},
+  %   YEAR =         {2009},
+  %   month = {June},
+  %   pages = {489--496},
+  %   Address = {Atlanta, GA},
+  %  url = {https://chamroukhi.users.lmno.cnrs.fr/papers/chamroukhi_ijcnn2009.pdf}
+  % }
+  %
+  % @article{chamroukhi_et_al_NN2009,
+  %  	Address = {Oxford, UK, UK},
+  % 	Author = {Chamroukhi, F. and Sam\'{e}, A. and Govaert, G. and Aknin, P.},
+  % 	Date-Added = {2014-10-22 20:08:41 +0000},
+  % 	Date-Modified = {2014-10-22 20:08:41 +0000},
+  % 	Journal = {Neural Networks},
+  % 	Number = {5-6},
+  % 	Pages = {593--602},
+  % 	Publisher = {Elsevier Science Ltd.},
+  % 	Title = {Time series modeling by a regression approach based on a latent process},
+  % 	Volume = {22},
+  % 	Year = {2009},
+  % 	url  = {https://chamroukhi.users.lmno.cnrs.fr/papers/Chamroukhi_Neural_Networks_2009.pdf}
+  % 	}
+  % @article{Chamroukhi-FDA-2018,
+  % 	Journal = {},
+  % 	Author = {Faicel Chamroukhi and Hien D. Nguyen},
+  % 	Volume = {},
+  % 	Title = {Model-Based Clustering and Classification of Functional Data},
+  % 	Year = {2018},
+  % 	eprint ={arXiv:1803.00276v2},
+  % 	url =  {https://chamroukhi.users.lmno.cnrs.fr/papers/MBCC-FDA.pdf}
+  % 	}
+  "
   K <- ncol(tauijk)
   n <- nrow(phiW)
   q <- ncol(phiW)
-
   if (K==1){
-    W <- matrix( nrow = q, ncol = 0)
+    W <- matrix( nrow = (q), ncol = 0)
     piik <- ones(piik_len, 1)
     reg_irls <- 0
     LL <- 0
@@ -84,14 +125,14 @@ IRLS_MixFRHLP <- function(tauijk, phiW, Wg_init=NULL, cluster_weights=NULL, verb
   I <- diag(q*(K-1))
 
 
-  #Initialisation du IRLS (iter = 0)
+  #IRLS Initialization (iter = 0)
   W_old <- Wg_init
 
   problik <- modele_logit(W_old, phiW, tauijk, cluster_weights)
   piik_old <- problik[[1]]
   loglik_old <- problik[[2]]
 
-  loglik_old <- loglik_old - lambda * norm(as.vector(W_old),"2")^2
+  loglik_old <- loglik_old - lambda * sum(W_old^2) #norm(as.vector(W_old),"2")^2
   iter <- 0
   converge <- FALSE
   max_iter <- 300
@@ -101,7 +142,7 @@ IRLS_MixFRHLP <- function(tauijk, phiW, Wg_init=NULL, cluster_weights=NULL, verb
   }
 
   while(!converge && (iter<max_iter)){
-    #Hw_old matrice carree de dimensions hx x hx
+    #Hw_old a squared matrix of dimensions  q*(K-1) x  q*(K-1)
     hx <- q*(K-1)
     Hw_old <- zeros(hx,hx)
     gw_old <- zeros(q,K-1)
@@ -117,21 +158,21 @@ IRLS_MixFRHLP <- function(tauijk, phiW, Wg_init=NULL, cluster_weights=NULL, verb
 
       for (qq in 1:q){
         vq <- phiW[,qq]
-        gw_old[qq,k] <- t(gwk) %*% vq
+        gw_old[qq,k] <- as.numeric(t(gwk) %*% vq)
       }
     }
-    gw_old <- matrix(gw_old, q*(K-1), 1)
+    gw_old <- matrix(gw_old, nrow = q*(K-1), ncol=1)
 
 
     #Hessienne
     for (k in 1:(K-1)){
       for (ell in 1:(K-1)){
-        delta_kl <- (k==ell)
+        delta_kl <- as.numeric(k==ell)
         if (is.null(cluster_weights)){
-          gwk <- piik_old[,k] * (ones(n,1)%*%delta_kl - piik_old[,ell])
+          gwk <- piik_old[,k] * (ones(n,1)*delta_kl - piik_old[,ell])
         }
         else{
-          gwk <- cluster_weights * (piik_old[,k] * (ones(n,1)%*%delta_kl - piik_old[,ell]))
+          gwk <- cluster_weights * (piik_old[,k] * (ones(n,1)*delta_kl - piik_old[,ell]))
         }
 
         Hkl <- zeros(q,q)
@@ -147,7 +188,7 @@ IRLS_MixFRHLP <- function(tauijk, phiW, Wg_init=NULL, cluster_weights=NULL, verb
       }
     }
 
-    # si a priori gaussien sur W (lambda ~ 1e-9)
+    # if a gaussien prior on W (lambda ~=0)
     Hw_old <- Hw_old + lambda*I
     gw_old = gw_old - lambda*as.vector(W_old)
 
@@ -159,24 +200,25 @@ IRLS_MixFRHLP <- function(tauijk, phiW, Wg_init=NULL, cluster_weights=NULL, verb
     problik <- modele_logit(W, phiW, tauijk, cluster_weights)
     piik <- problik[[1]]
     loglik <- problik[[2]]
-    loglik <- loglik - lambda*(norm(as.vector(W_old),"2"))^2
+    loglik <- loglik - lambda*sum(W^2) #(norm(as.vector(W_old),"2"))^2
 
-    # # Verifier si Qw1(w^(c+1),w^(c))> Qw1(w^(c),w^(c))
-    # #(adaptation) de Newton Raphson : W(c+1) = W(c) - pas*H(W)^(-1)*g(W)
-    # pas <- 1
-    # alpha <- 2
-    #
-    # while(loglik < loglik_old){
-    #   pas <- pas/alpha # pas d'adaptation de l'algo Newton raphson
-    #   #recalcul du parametre W et de la loglik
-    #   #Hw_old = Hw_old + lambda*I;
-    #   w <- as.vector(W_old) - pas * solve(Hw_old)%*%gw_old
-    #   W = matrix(w,q,K-1)
-    #   problik <- modele_logit(W, phiW, tauijk, cluster_weights)
-    #   piik <- problik[[1]]
-    #   loglik <- problik[[2]]
-    #   loglik <- loglik - lambda*(norm(as.vector(W_old),"2"))^2
-    # }
+    ##  check if Qw1(w^(t+1),w^(t))> Qw1(w^(t),w^(t))
+    ##(adaptive stepsize in case of troubles with stepsize 1) Newton Raphson : W(t+1) = W(t) - stepsize*H(W)^(-1)*g(W)
+    pas <- 1
+    alpha <- 2
+
+    while(loglik < loglik_old){
+      pas <- pas/alpha # pas d'adaptation de l'algo Newton raphson
+      #recalcul du parametre W et de la loglik
+      #Hw_old = Hw_old + lambda*I;
+      w <- as.vector(W_old) - pas * solve(Hw_old)%*%gw_old
+      W = matrix(w,q,K-1)
+      problik <- modele_logit(W, phiW, tauijk, cluster_weights)
+      piik <- problik[[1]]
+      loglik <- problik[[2]]
+
+      loglik <- loglik - lambda**sum(W^2)#(norm(as.vector(W),"2"))^2
+    }
 
     converge1 <- abs((loglik - loglik_old)/loglik_old) <= 1e-7
     converge2 <- abs(loglik - loglik_old) <= 1e-6
@@ -208,16 +250,14 @@ IRLS_MixFRHLP <- function(tauijk, phiW, Wg_init=NULL, cluster_weights=NULL, verb
   }
 
   return(list(W, piik, reg_irls, LL, loglik))
-}
-
+  }
 
 
 
 modele_logit <- function(Wg, phiW, Y=NULL, Gamma=NULL){
-  #W - Wg
-  #M - phiW
-  #Y - ?
-  #Gamma - cluster_weights
+  "
+  calculates the pobabilities according to multinomial logistic model
+  "
   if (!is.null(Y)) {
     n1 <- nrow(Y)
     K <- ncol(Y)
@@ -239,9 +279,9 @@ modele_logit <- function(Wg, phiW, Y=NULL, Gamma=NULL){
   }
 
   if (!is.null(Y)){
-    if (ncol(Wg) == (K-1)){ # pas de vecteur nul dans W donc l'ajouter
+    if (ncol(Wg) == (K-1)){ # W doesnt contain the null vector associated with the last class
       wK <- zeros(q,1)
-      Wg <- cbind(Wg, wK)
+      Wg <- cbind(Wg, wK) #add the null vector wK for the last component probability
     }
     else{
       stop("Wg and Y must have the same number of lines")
@@ -249,7 +289,6 @@ modele_logit <- function(Wg, phiW, Y=NULL, Gamma=NULL){
   }
   else{
     wK <- zeros(q,1)
-    #print(Wg)
     Wg <- cbind(Wg, wK)
     q <- nrow(Wg)
     K <- ncol(Wg)
@@ -257,7 +296,7 @@ modele_logit <- function(Wg, phiW, Y=NULL, Gamma=NULL){
 
   MW <- phiW %*% Wg
   maxm <- apply(MW,1,max)
-  MW <- MW - maxm %*% ones(1,K)
+  MW <- MW - maxm %*% ones(1,K) # to avoid overfolow
 
   expMW <- exp(MW)
   if (ncol(expMW)==1){
@@ -277,6 +316,7 @@ modele_logit <- function(Wg, phiW, Y=NULL, Gamma=NULL){
     }
 
     if (is.nan(loglik)){
+      # to avoid numerical overflow since exp(XW=-746)=0 and exp(XW=710)=inf)
       MW <- phiW %*% Wg
       minm <- -745.1
       MW <- pmax(MW, minm)
