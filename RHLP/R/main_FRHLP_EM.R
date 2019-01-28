@@ -5,7 +5,6 @@ source("R/ModelOptions.R")
 source("R/enums.R")
 source("R/ModelLearner.R")
 
-library(R.matlab)
 fileName = "data/simulated_time_series.mat"
 mixData <- MyData$new()
 mixData$setDataFromMat(fileName)
