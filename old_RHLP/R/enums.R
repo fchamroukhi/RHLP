@@ -5,4 +5,3 @@ enum <- function(...) {
 }
 
 variance_types <- enum(homoskedastic, hetereskedastic)
-#algorithms <- enum(em, cem)
