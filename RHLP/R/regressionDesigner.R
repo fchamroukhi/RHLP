@@ -1,4 +1,5 @@
 designmatrix = function(x, p, q = NULL, n=1) {
+
   order_max <- p
   if (!is.null(q)) {
     order_max <- max(p, q)
@@ -19,5 +20,5 @@ designmatrix = function(x, p, q = NULL, n=1) {
   XBeta <- repmat(XBeta, n, 1)
   Xw <- repmat(Xw, n, 1)
 
-  return(list(Xw, XBeta))
+  return(list(Xw = Xw, XBeta = XBeta))
 }

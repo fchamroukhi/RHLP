@@ -185,5 +185,5 @@ IRLS <- function(tauijk, phiW, Wg_init=NULL, cluster_weights=NULL, verbose_IRLS=
     reg_irls <- lambda * (norm(as.vector(W),"2"))^2
   }
 
-  return(list(W, piik, reg_irls, LL, loglik))
+  return(list(W = W, piik = piik, reg_irls = reg_irls, LL = LL, loglik = loglik))
   }
