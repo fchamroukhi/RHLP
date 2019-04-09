@@ -1,7 +1,7 @@
 StatRHLP <- setRefClass(
   "StatRHLP",
   fields = list(
-    h_ig = "matrix", # post probabilities            piik in the matlab code of RHLP
+    piik = "matrix",
     z_ik = "matrix", # c_ig in MIX_RHLP
     klas = "matrix",
     # pi_jgk = "matrix",
@@ -39,9 +39,9 @@ StatRHLP <- setRefClass(
            Z : Matrice de dimension [nxK] de la partition dure : ses elements sont zik, avec zik=1 si xi
            appartient à la classe k (au sens du MAP) et zero sinon.
       "
-      N <- nrow(h_ig)
-      K <- ncol(h_ig)
-      ikmax <- max.col(h_ig)
+      N <- nrow(piik)
+      K <- ncol(piik)
+      ikmax <- max.col(piik)
       ikmax <- matrix(ikmax, ncol = 1)
       z_ik <<- ikmax%*%ones(1,K) == ones(N,1)%*%(1:K) # partition_MAP
       klas <<- ones(N,1)
@@ -63,7 +63,7 @@ StatRHLP <- setRefClass(
     #######
     computeStats = function(modelRHLP, m, phi, cpu_time_all){
       polynomials <<- phi$XBeta %*% modelRHLP$beta
-      weighted_polynomials <<- h_ig * polynomials
+      weighted_polynomials <<- piik * polynomials
       Ex <<- matrix(rowSums(weighted_polynomials))
 
       cpu_time <<- mean(cpu_time_all)
@@ -83,7 +83,7 @@ StatRHLP <- setRefClass(
 
 
 StatRHLP<-function(modelRHLP, m){
-  h_ig <- matrix(NA, m, modelRHLP$K)
+  piik <- matrix(NA, m, modelRHLP$K)
   z_ik <- matrix(NA, m, modelRHLP$K)
   klas <- matrix(NA,  m, 1)
   Ex <- matrix(NA, m, 1)
@@ -107,6 +107,6 @@ StatRHLP<-function(modelRHLP, m){
   else{
     nu <- (modelRHLP$p+modelRHLP$q+3)*modelRHLP$K-(modelRHLP$q+1)
   }
-  new("StatRHLP", h_ig = h_ig, z_ik = z_ik, klas = klas, nu = nu, Ex = Ex, log_lik = log_lik, com_loglik = com_loglik, stored_loglik = stored_loglik, stored_com_loglik = stored_com_loglik, BIC = BIC, ICL = ICL, AIC = AIC, cpu_time = cpu_time,
+  new("StatRHLP", piik = piik, z_ik = z_ik, klas = klas, nu = nu, Ex = Ex, log_lik = log_lik, com_loglik = com_loglik, stored_loglik = stored_loglik, stored_com_loglik = stored_com_loglik, BIC = BIC, ICL = ICL, AIC = AIC, cpu_time = cpu_time,
       log_piik_fik = log_piik_fik, log_sum_piik_fik = log_sum_piik_fik, tik = tik, polynomials = polynomials, weighted_polynomials = weighted_polynomials)
 }

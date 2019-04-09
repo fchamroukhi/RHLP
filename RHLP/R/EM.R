@@ -119,7 +119,7 @@ EM <- function(K, p, q, variance_type, fData, n_tries, max_iter, threshold, verb
       #############################################
       # E Step
       #############################################
-      stat$h_ig <- modele_logit(modelRHLP$W, phi$Xw)[[1]]
+      stat$piik <- modele_logit(modelRHLP$W, phi$Xw)[[1]]
       for (k in (1:modelRHLP$K)){
         muk <- phi$XBeta%*%modelRHLP$beta[,k]
         if (modelRHLP$variance_type == variance_types$homoskedastic){
@@ -129,7 +129,7 @@ EM <- function(K, p, q, variance_type, fData, n_tries, max_iter, threshold, verb
           sigmak <- modelRHLP$sigma[k]
         }
         z <- ((fData$Y-muk)^2)/sigmak
-        stat$log_piik_fik[,k] <- log(stat$h_ig[,k]) - (0.5 * ones(fData$m,1) * (log(2*pi) + log(sigmak))) - (0.5*z)
+        stat$log_piik_fik[,k] <- log(stat$piik[,k]) - (0.5 * ones(fData$m,1) * (log(2*pi) + log(sigmak))) - (0.5*z)
 
       }
 
@@ -217,11 +217,11 @@ EM <- function(K, p, q, variance_type, fData, n_tries, max_iter, threshold, verb
       paramSolution <- modelRHLP$copy()
       if (modelRHLP$K==1){
         statSolution$tik <- matrix(stat$tik, nrow = fData$m, ncol = 1)
-        statSolution$h_ig <- matrix(stat$h_ig, nrow = fData$m, ncol = 1)
+        statSolution$piik <- matrix(stat$piik, nrow = fData$m, ncol = 1)
       }
       else{
         statSolution$tik <- stat$tik[1:fData$m,]
-        statSolution$h_ig <- stat$h_ig[1:fData$m,]
+        statSolution$piik <- stat$piik[1:fData$m,]
       }
 
       best_loglik <- stat$log_lik
