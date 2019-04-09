@@ -232,7 +232,7 @@ EM <- function(K, p, q, variance_type, fData, n_tries, max_iter, threshold, verb
   }
 
   # Computation of c_ig the hard partition of the curves and klas
-  stat$MAP()
+  statSolution$MAP()
 
   if (n_tries > 1){
     message("max value: ", statSolution$log_lik)
