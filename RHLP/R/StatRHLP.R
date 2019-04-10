@@ -1,3 +1,5 @@
+source("R/model_logit.R")
+
 StatRHLP <- setRefClass(
   "StatRHLP",
   fields = list(
@@ -5,7 +7,6 @@ StatRHLP <- setRefClass(
     z_ik = "matrix", # c_ig in MIX_RHLP
     klas = "matrix",
     # pi_jgk = "matrix",
-    nu="numeric",
     Ex = "matrix",
     log_lik="numeric",
     com_loglik="numeric",
@@ -61,32 +62,58 @@ StatRHLP <- setRefClass(
     #######
     # compute the final solution stats
     #######
-    computeStats = function(modelRHLP, m, phi, cpu_time_all){
-      polynomials <<- phi$XBeta %*% modelRHLP$beta
+    computeStats = function(modelRHLP, paramRHLP, phi, cpu_time_all){
+      polynomials <<- phi$XBeta %*% paramRHLP$beta
       weighted_polynomials <<- piik * polynomials
       Ex <<- matrix(rowSums(weighted_polynomials))
 
       cpu_time <<- mean(cpu_time_all)
-      Psi <- c(as.vector(modelRHLP$W), as.vector(modelRHLP$beta), as.vector(modelRHLP$sigma))
-      BIC <<- log_lik - (nu*log(m)/2)
-      AIC <<- log_lik - nu
+      # Psi <- c(as.vector(paramRHLP$Wk), as.vector(paramRHLP$betak), as.vector(paramRHLP$sigmak))
+      BIC <<- log_lik - (modelRHLP$nu*log(modelRHLP$m)/2)
+      AIC <<- log_lik - modelRHLP$nu
 
 
       zik_log_alphag_fg_xij <- (z_ik)*(log_piik_fik);
       com_loglik <<- sum(rowSums(zik_log_alphag_fg_xij));
 
-      ICL <<- com_loglik - nu*log(m)/2;
+      ICL <<- com_loglik - modelRHLP$nu*log(modelRHLP$m)/2;
 
+    },
+    #######
+    # EStep
+    #######
+    EStep = function(modelRHLP, paramRHLP, phi){
+      piik <<- modele_logit(paramRHLP$W, phi$Xw)[[1]]
+      for (k in (1:K)){
+        muk <- phi$XBeta%*%paramRHLP$beta[,k]
+        if (modelRHLP$variance_type == variance_types$homoskedastic){
+          sigmak <-  paramRHLP$sigma
+        }
+        else{
+          sigmak <- paramRHLP$sigma[k]
+        }
+        z <- ((modelRHLP$Y-muk)^2)/sigmak
+        log_piik_fik[,k] <<- log(piik[,k]) - (0.5 * ones(modelRHLP$m,1) * (log(2*pi) + log(sigmak))) - (0.5*z)
+
+      }
+
+      log_piik_fik <<- pmax(log_piik_fik, log(.Machine$double.xmin))
+      piik_fik <- exp(log_piik_fik)
+      fxi <- rowSums(piik_fik)
+      log_fxi <- log(fxi)
+      log_sum_piik_fik <<- matrix(log(rowSums(piik_fik)))
+      log_tik <- log_piik_fik - log_sum_piik_fik%*%ones(1,modelRHLP$K)
+      tik <<- normalize(exp(log_tik),2)$M
     }
   )
 )
 
 
-StatRHLP<-function(modelRHLP, m){
-  piik <- matrix(NA, m, modelRHLP$K)
-  z_ik <- matrix(NA, m, modelRHLP$K)
-  klas <- matrix(NA,  m, 1)
-  Ex <- matrix(NA, m, 1)
+StatRHLP<-function(modelRHLP){
+  piik <- matrix(NA,modelRHLP$m, modelRHLP$K)
+  z_ik <- matrix(NA,modelRHLP$m, modelRHLP$K)
+  klas <- matrix(NA, modelRHLP$m, 1)
+  Ex <- matrix(NA,modelRHLP$m, 1)
   log_lik <- -Inf
   com_loglik <- -Inf
   stored_loglik <- list()
@@ -95,18 +122,12 @@ StatRHLP<-function(modelRHLP, m){
   ICL <- -Inf
   AIC <- -Inf
   cpu_time <- Inf
-  log_piik_fik <- matrix(0, m, modelRHLP$K)
-  log_sum_piik_fik <- matrix(NA, m, 1)
-  tik <- matrix(0, m, modelRHLP$K)
-  polynomials <- matrix(NA, m, modelRHLP$K)
-  weighted_polynomials <- matrix(NA, m, modelRHLP$K)
-  #number of free model parameters
-  if (modelRHLP$variance_type == variance_types$homoskedastic){
-    nu <- (modelRHLP$p+modelRHLP$q+3)*modelRHLP$K-(modelRHLP$q+1) - (modelRHLP$K-1)
-  }
-  else{
-    nu <- (modelRHLP$p+modelRHLP$q+3)*modelRHLP$K-(modelRHLP$q+1)
-  }
-  new("StatRHLP", piik = piik, z_ik = z_ik, klas = klas, nu = nu, Ex = Ex, log_lik = log_lik, com_loglik = com_loglik, stored_loglik = stored_loglik, stored_com_loglik = stored_com_loglik, BIC = BIC, ICL = ICL, AIC = AIC, cpu_time = cpu_time,
-      log_piik_fik = log_piik_fik, log_sum_piik_fik = log_sum_piik_fik, tik = tik, polynomials = polynomials, weighted_polynomials = weighted_polynomials)
+  log_piik_fik <- matrix(0, modelRHLP$m, modelRHLP$K)
+  log_sum_piik_fik <- matrix(NA,modelRHLP$m, 1)
+  tik <- matrix(0, modelRHLP$m, modelRHLP$K)
+  polynomials <- matrix(NA, modelRHLP$m, modelRHLP$K)
+  weighted_polynomials <- matrix(NA, modelRHLP$m, modelRHLP$K)
+
+  new("StatRHLP", piik=piik, z_ik=z_ik, klas=klas, Ex=Ex, log_lik=log_lik, com_loglik=com_loglik, stored_loglik=stored_loglik, stored_com_loglik=stored_com_loglik, BIC=BIC, ICL=ICL, AIC=AIC, cpu_time=cpu_time,
+      log_piik_fik=log_piik_fik, log_sum_piik_fik = log_sum_piik_fik, tik=tik, polynomials=polynomials, weighted_polynomials=weighted_polynomials)
 }
