@@ -13,8 +13,7 @@ fData$setData(X, Y)
 
 K <- 5 # number of regimes (mixture components)
 p <- 3 # dimension of beta (order of the polynomial regressors)
-q <-
-  1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
+q <- 1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
 variance_type <- variance_types$hetereskedastic
 
 modelRHLP <- ModelRHLP(fData, K, p, q)
