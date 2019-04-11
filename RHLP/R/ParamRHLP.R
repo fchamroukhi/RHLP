@@ -139,12 +139,10 @@ ParamRHLP <- setRefClass(
   )
 )
 
-ParamRHLP <- function(modelRHLP, options) {
-  #modelRHLP <- modelRHLP
+ParamRHLP <- function(modelRHLP) {
   W <- matrix(0, modelRHLP$p + 1, modelRHLP$K - 1)
   beta <- matrix(NA, modelRHLP$p + 1, modelRHLP$K)
   if (modelRHLP$variance_type == variance_types$homoskedastic) {
-    # todo: verify the dimensions
     sigma <- matrix(NA)
   }
   else{
