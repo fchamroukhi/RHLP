@@ -4,12 +4,9 @@ source("R/ModelRHLP.R")
 source("R/enums.R")
 source("R/ModelLearner.R")
 
-fileName = "data/simulated_time_series.mat"
-library(R.matlab)
-data <- readMat(fileName)
+
 # Building matrices for regression
-X <- data$x
-Y <- data$y
+load("data/realTimeSeries1.RData")
 fData <- FData$new()
 fData$setData(X, Y)
 
