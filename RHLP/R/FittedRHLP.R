@@ -6,10 +6,8 @@ FittedRHLP <- setRefClass(
     statRHLP = "StatRHLP"
   ),
   methods = list(
-
     plot = function() {
-
-      par(mfrow=c(2, 1))
+      par(mfrow = c(2, 1))
       plot.default(modelRHLP$Y, type = "l", ylab = "y", xlab = "")
       title(main = "Time series, RHLP regimes and process probabilities")
       colors = rainbow(modelRHLP$K)
@@ -21,11 +19,13 @@ FittedRHLP <- setRefClass(
       }
 
       plot.default(statRHLP$piik[, 1], type = "l", lwd = 2, col = colors[1], xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)))
-      for (k in 2:modelRHLP$K) {
-        lines(statRHLP$piik[, k], type = "l", lwd = 2, col = colors[k])
+      if (K > 1) {
+        for (k in 2:modelRHLP$K) {
+          lines(statRHLP$piik[, k], type = "l", lwd = 2, col = colors[k])
+        }
       }
 
-      par(mfrow=c(2, 1))
+      par(mfrow = c(2, 1))
       plot.default(modelRHLP$Y, type = "l", ylab = "y", xlab = "")
       title(main = "Time series, estimated RHLP model, and segmentation")
 
@@ -34,12 +34,10 @@ FittedRHLP <- setRefClass(
         abline(v = tk[i], lty = "dotted", lwd = 2, col = "red")
       }
       plot.default(statRHLP$klas, type = "l", lwd = 2, col = "red", xlab = "", ylab = "Estimated class labels")
-
-
     }
   )
 )
 
-FittedRHLP<-function(modelRHLP, paramRHLP, statRHLP){
+FittedRHLP <- function(modelRHLP, paramRHLP, statRHLP) {
   new("FittedRHLP", modelRHLP = modelRHLP, paramRHLP = paramRHLP, statRHLP = statRHLP)
 }

@@ -4,20 +4,23 @@ FData <- setRefClass(
 
   # Define the fields
   fields = list(
-    X="matrix", # covariates
-    Y="matrix", # series
-    m="numeric",
-    n="numeric",
-    vecY="matrix"),
+    X = "matrix",
+    # covariates
+    Y = "matrix",
+    # series
+    m = "numeric",
+    n = "numeric",
+    vecY = "matrix"
+  ),
 
   # Set the methods
-  methods=list(
+  methods = list(
     # set Data from a file
-    setData = function(X, Y){
+    setData = function(X, Y) {
       Y <<- Y
       setDataProperties()
-      if (n==1){
-        Y<<-t(Y)
+      if (n == 1) {
+        Y <<- t(Y)
       }
 
       X <<- X
@@ -25,7 +28,7 @@ FData <- setRefClass(
     },
 
 
-    setDataProperties = function(){
+    setDataProperties = function() {
       n <<- nrow(Y)
       m <<- ncol(Y)
       vecY <<- matrix(t(Y), ncol = 1)
