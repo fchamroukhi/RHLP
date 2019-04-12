@@ -1,6 +1,7 @@
 source("R/FData.R")
 
 designmatrix = function(x, p, q = NULL, n = 1) {
+
   order_max <- p
   if (!is.null(q)) {
     order_max <- max(p, q)
@@ -15,11 +16,13 @@ designmatrix = function(x, p, q = NULL, n = 1) {
   # design matrix for Beta (the polynomial regressions)
   if (!is.null(q)) {
     Xw <- X[, 1:(q + 1)]
+    Xw <- repmat(Xw, n, 1)
     # design matrix for w (the logistic regression)
+  } else {
+    Xw <- NULL
   }
 
   XBeta <- repmat(XBeta, n, 1)
-  Xw <- repmat(Xw, n, 1)
 
   return(list(Xw = Xw, XBeta = XBeta))
 }
