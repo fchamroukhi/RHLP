@@ -30,6 +30,7 @@ ModelRHLP <- function(fData, K, p, q) {
     Y = fData$Y,
     X = fData$X,
     m = fData$m,
+    n = fData$n,
     K = K,
     p = p,
     q = q,
