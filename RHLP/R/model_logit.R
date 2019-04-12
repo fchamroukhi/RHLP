@@ -87,5 +87,5 @@ modele_logit <- function(Wg, phiW, Y = NULL, Gamma = NULL) {
     loglik <- c()
   }
 
-  return(list(probas, loglik))
+  return(list(probas = probas, loglik = loglik))
 }

@@ -65,8 +65,8 @@ IRLS <- function(tauijk, phiW, Wg_init = NULL, cluster_weights = NULL, verbose_I
       W_old <- Wg_init
 
       problik <- modele_logit(W_old, phiW, tauijk, cluster_weights)
-      piik_old <- problik[[1]]
-      loglik_old <- problik[[2]]
+      piik_old <- problik$probas
+      loglik_old <- problik$loglik
 
       loglik_old <-
         loglik_old - lambda * sum(W_old ^ 2) #norm(as.vector(W_old),"2")^2
@@ -137,8 +137,8 @@ IRLS <- function(tauijk, phiW, Wg_init = NULL, cluster_weights = NULL, verbose_I
 
         # mise a jour des probas et de la loglik
         problik <- modele_logit(W, phiW, tauijk, cluster_weights)
-        piik <- problik[[1]]
-        loglik <- problik[[2]]
+        piik <- problik$probas
+        loglik <- problik$loglik
         loglik <-
           loglik - lambda * sum(W ^ 2) #(norm(as.vector(W_old),"2"))^2
 
@@ -154,8 +154,8 @@ IRLS <- function(tauijk, phiW, Wg_init = NULL, cluster_weights = NULL, verbose_I
           w <- as.vector(W_old) - pas * solve(Hw_old) %*% gw_old
           W = matrix(w, q, K - 1)
           problik <- modele_logit(W, phiW, tauijk, cluster_weights)
-          piik <- problik[[1]]
-          loglik <- problik[[2]]
+          piik <- problik$probas
+          loglik <- problik$loglik
 
           loglik <-
             loglik - lambda ** sum(W ^ 2)#(norm(as.vector(W),"2"))^2
