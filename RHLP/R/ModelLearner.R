@@ -54,7 +54,7 @@ EM <-
         if (is.na(converge)) {
           converge <-
             FALSE
-        } # basicly for the first iteration when prev_loglik is Inf
+        } # Basically for the first iteration when prev_loglik is Inf
 
         prev_loglik <- stat$log_lik
         stat$stored_loglik[iter] <- stat$log_lik

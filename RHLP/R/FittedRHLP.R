@@ -19,7 +19,7 @@ FittedRHLP <- setRefClass(
       }
 
       plot.default(statRHLP$piik[, 1], type = "l", lwd = 2, col = colors[1], xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)))
-      if (K > 1) {
+      if (modelRHLP$K > 1) {
         for (k in 2:modelRHLP$K) {
           lines(statRHLP$piik[, k], type = "l", lwd = 2, col = colors[k])
         }
@@ -29,7 +29,7 @@ FittedRHLP <- setRefClass(
       plot.default(modelRHLP$Y, type = "l", ylab = "y", xlab = "")
       title(main = "Time series, estimated RHLP model, and segmentation")
 
-      tk = which(diff(statRHLP$klas) != 0)
+      tk <- which(diff(statRHLP$klas) != 0)
       for (i in 1:length(tk)) {
         abline(v = tk[i], lty = "dotted", lwd = 2, col = "red")
       }
