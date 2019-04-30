@@ -7,33 +7,43 @@ FittedRHLP <- setRefClass(
   ),
   methods = list(
     plot = function() {
-      par(mfrow = c(2, 1))
-      plot.default(modelRHLP$Y, type = "l", ylab = "y", xlab = "")
+
+      yaxislim <- c(mean(modelRHLP$Y) - 2 * sd(modelRHLP$Y), mean(modelRHLP$Y) + 2 * sd(modelRHLP$Y))
+
+      # Data, regressors, and segmentation
+      par(mfrow = c(2, 1), mai = c(0.6, 1, 0.5, 0.5), mgp = c(2, 1, 0))
+      plot.default(modelRHLP$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y")
       title(main = "Time series, RHLP regimes and process probabilities")
-      colors = rainbow(modelRHLP$K)
+      colorsvec = rainbow(modelRHLP$K)
       for (k in 1:modelRHLP$K) {
         index <- (statRHLP$klas == k)
-        polynomials <- statRHLP$polynomials[(statRHLP$klas == k), k]
-        lines(statRHLP$polynomials[, k], lty = "dotted", lwd = 2, col = colors[k])
-        lines(seq(1:modelRHLP$m)[index], polynomials, lwd = 2, col = colors[k])
+        polynomials <- statRHLP$polynomials[index, k]
+        lines(statRHLP$polynomials[, k], col = colorsvec[k], lty = "dotted", lwd = 1.5)
+        lines(seq(1:modelRHLP$m)[index], col = colorsvec[k], polynomials, lwd = 1.5)
       }
 
-      plot.default(statRHLP$piik[, 1], type = "l", lwd = 2, col = colors[1], xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)))
+      # Probablities of the hidden process (segmentation)
+      plot.default(statRHLP$piik[, 1], type = "l", xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)), col = colorsvec[1], lwd = 1.5)
       if (modelRHLP$K > 1) {
         for (k in 2:modelRHLP$K) {
-          lines(statRHLP$piik[, k], type = "l", lwd = 2, col = colors[k])
+          lines(statRHLP$piik[, k], col = colorsvec[k], lwd = 1.5)
         }
       }
 
-      par(mfrow = c(2, 1))
-      plot.default(modelRHLP$Y, type = "l", ylab = "y", xlab = "")
+      # Data, regression model, and segmentation
+      par(mfrow = c(2, 1), mai = c(0.6, 1, 0.5, 0.5), mgp = c(2, 1, 0))
+      plot.default(modelRHLP$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y")
+      lines(statRHLP$Ex, col = "red", lwd = 1.5)
       title(main = "Time series, estimated RHLP model, and segmentation")
 
+      # transition time points
       tk <- which(diff(statRHLP$klas) != 0)
       for (i in 1:length(tk)) {
-        abline(v = tk[i], lty = "dotted", lwd = 2, col = "red")
+        abline(v = tk[i], col = "red", lty = "dotted", lwd = 1.5)
       }
-      plot.default(statRHLP$klas, type = "l", lwd = 2, col = "red", xlab = "", ylab = "Estimated class labels")
+
+      # Probablities of the hidden process (segmentation)
+      plot.default(statRHLP$klas, type = "l", xlab = "x", ylab = "Estimated class labels", col = "red", lwd = 1.5)
     }
   )
 )
