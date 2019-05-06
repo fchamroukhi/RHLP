@@ -8,6 +8,9 @@ FittedRHLP <- setRefClass(
   methods = list(
     plot = function() {
 
+      oldpar <- par()[c("mfrow", "mai", "mgp")]
+      on.exit(par(oldpar), add = TRUE)
+
       yaxislim <- c(mean(modelRHLP$Y) - 2 * sd(modelRHLP$Y), mean(modelRHLP$Y) + 2 * sd(modelRHLP$Y))
 
       # Data, regressors, and segmentation
