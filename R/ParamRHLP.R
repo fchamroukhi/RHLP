@@ -1,7 +1,3 @@
-source("R/enums.R")
-source("R/utils.R")
-source("R/IRLS.R")
-
 ParamRHLP <- setRefClass(
   "ParamRHLP",
   fields = list(W = "matrix",
@@ -37,7 +33,7 @@ ParamRHLP <- setRefClass(
         }
       }
       else{
-        # initialisation aléatoire
+        # initialisation al??atoire
         #Initialization of W
         W <<- rand(modelRHLP$q + 1, modelRHLP$K - 1)
 
@@ -123,7 +119,7 @@ ParamRHLP <- setRefClass(
       }
 
       # Maximization w.r.t W
-      # ----------------------------------%
+      # ----------------------------------
       #  IRLS : Iteratively Reweighted Least Squares (for IRLS, see the IJCNN 2009 paper)
       res_irls <-
         IRLS(statRHLP$tik,

@@ -1,11 +1,4 @@
-source("R/enums.R")
-source("R/utils.R")
-source("R/ParamRHLP.R")
-source("R/StatRHLP.R")
-source("R/FittedRHLP.R")
-
-EM <-
-  function(modelRHLP, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
+EM <- function(modelRHLP, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
     phi <- designmatrix(x = modelRHLP$X, p = modelRHLP$p, q = modelRHLP$q)
 
     top <- 0

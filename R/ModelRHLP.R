@@ -1,6 +1,3 @@
-source("R/FData.R")
-source("R/enums.R")
-
 ModelRHLP <- setRefClass(
   "ModelRHLP",
   contains = "FData",
