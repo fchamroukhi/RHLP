@@ -84,7 +84,7 @@ StatRHLP <- setRefClass(
     # EStep
     #######
     EStep = function(modelRHLP, paramRHLP, phi) {
-      piik <<- modele_logit(paramRHLP$W, phi$Xw)$probas
+      piik <<- multinomialLogit(paramRHLP$W, phi$Xw, ones(modelRHLP$m, modelRHLP$K), ones(modelRHLP$m, 1))$piik
       for (k in (1:K)) {
         muk <- phi$XBeta %*% paramRHLP$beta[, k]
         if (modelRHLP$variance_type == variance_types$homoskedastic) {

@@ -37,9 +37,9 @@ See `help(package="RHLP")` for further details and references provided by `citat
 # Load data
 
 ```{r}
-data("simulatedTimeSeries")
+data("simulatedtimeserie")
 fData <- FData$new()
-fData$setData(X, Y)
+fData$setData(t(simulatedtimeserie$X), t(simulatedtimeserie$Y))
 ```
 
 # Set up RHLP model parameters
@@ -75,5 +75,3 @@ solution <- EM(modelRHLP, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```{r}
 solution$plot()
 ```
-
-

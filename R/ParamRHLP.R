@@ -33,7 +33,7 @@ ParamRHLP <- setRefClass(
         }
       }
       else{
-        # initialisation al??atoire
+        # initialisation aleatoire
         #Initialization of W
         W <<- rand(modelRHLP$q + 1, modelRHLP$K - 1)
 
@@ -121,16 +121,12 @@ ParamRHLP <- setRefClass(
       # Maximization w.r.t W
       # ----------------------------------
       #  IRLS : Iteratively Reweighted Least Squares (for IRLS, see the IJCNN 2009 paper)
-      res_irls <-
-        IRLS(statRHLP$tik,
-             phi$Xw,
-             W,
-             verbose_IRLS = verbose_IRLS,
-             piik_len = modelRHLP$m)
+      # res_irls <- IRLS(statRHLP$tik, phi$Xw, W, verbose_IRLS = verbose_IRLS, piik_len = modelRHLP$m)
+      res_irls <- IRLS(phi$Xw, statRHLP$tik, ones(nrow(statRHLP$tik), 1), W, verbose_IRLS)
 
-      W <<- res_irls[[1]]
-      piik <- res_irls[[2]]
-      reg_irls <- res_irls[[3]]
+      W <<- res_irls$W
+      piik <- res_irls$piik
+      reg_irls <- res_irls$reg_irls
     }
   )
 )

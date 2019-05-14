@@ -9,10 +9,10 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 LazyData: true
 Collate:
+    RHLP.R
+    RcppExports.R
     enums.R
     utils.R
-    model_logit.R
-    IRLS.R
     FData.R
     ModelRHLP.R
     ParamRHLP.R
@@ -23,3 +23,10 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
+Imports: 
+    Rcpp
