@@ -9,7 +9,7 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 LazyData: true
 Collate:
-    RHLP.R
+    RHLP-package.R
     RcppExports.R
     enums.R
     utils.R
