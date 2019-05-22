@@ -39,7 +39,7 @@ FittedRHLP <- setRefClass(
       lines(statRHLP$Ex, col = "red", lwd = 1.5)
       title(main = "Time series, estimated RHLP model, and segmentation")
 
-      # transition time points
+      # Transition time points
       tk <- which(diff(statRHLP$klas) != 0)
       for (i in 1:length(tk)) {
         abline(v = tk[i], col = "red", lty = "dotted", lwd = 1.5)
