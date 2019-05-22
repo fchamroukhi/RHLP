@@ -43,7 +43,7 @@ library(RHLP)
 
 data("simulatedtimeserie")
 fData <- FData$new()
-fData$setData(t(simulatedtimeserie$X), t(simulatedtimeserie$Y))
+fData$setData(simulatedtimeserie$X, t(simulatedtimeserie$Y))
 
 K <- 5 # number of regimes (mixture components)
 p <- 3 # dimension of beta (order of the polynomial regressors)
