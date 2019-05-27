@@ -12,9 +12,9 @@ ModelRHLP <- setRefClass(
 
 ModelRHLP <- function(fData, K, p, q, variance_type) {
   if (variance_type == variance_types$homoskedastic) {
-    nu <<- (p + q + 3) * K - (q + 1) - (K - 1)
+    nu <- (p + q + 3) * K - (q + 1) - (K - 1)
   } else{
-    nu <<- (p + q + 3) * K - (q + 1)
+    nu <- (p + q + 3) * K - (q + 1)
   }
 
   new(

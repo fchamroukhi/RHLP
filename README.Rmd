@@ -49,8 +49,7 @@ browseVignettes("RHLP")
 library(RHLP)
 
 data("simulatedtimeserie")
-fData <- FData$new()
-fData$setData(simulatedtimeserie$X, t(simulatedtimeserie$Y))
+fData <- FData(simulatedtimeserie$X, t(simulatedtimeserie$Y))
 
 K <- 5 # number of regimes (mixture components)
 p <- 3 # dimension of beta (order of the polynomial regressors)

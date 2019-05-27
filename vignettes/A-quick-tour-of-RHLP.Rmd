@@ -38,8 +38,7 @@ See `help(package="RHLP")` for further details and references provided by `citat
 
 ```{r}
 data("simulatedtimeserie")
-fData <- FData$new()
-fData$setData(simulatedtimeserie$X, t(simulatedtimeserie$Y))
+fData <- FData(simulatedtimeserie$X, t(simulatedtimeserie$Y))
 ```
 
 # Set up RHLP model parameters
