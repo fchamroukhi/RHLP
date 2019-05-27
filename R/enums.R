@@ -4,4 +4,4 @@ enum <- function(...) {
   return(x)
 }
 
-variance_types <- enum(homoskedastic, hetereskedastic)
+variance_types <- enum(homoskedastic, heteroskedastic)
