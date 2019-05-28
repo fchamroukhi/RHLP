@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 IRLS <- function(X, Tau, Gamma, Winit, verbose = FALSE) {
-    .Call('_RHLP_IRLS', PACKAGE = 'RHLP', X, Tau, Gamma, Winit, verbose)
+    .Call(`_RHLP_IRLS`, X, Tau, Gamma, Winit, verbose)
 }
 
 multinomialLogit <- function(W, X, Y, Gamma) {
-    .Call('_RHLP_multinomialLogit', PACKAGE = 'RHLP', W, X, Y, Gamma)
+    .Call(`_RHLP_multinomialLogit`, W, X, Y, Gamma)
 }
 

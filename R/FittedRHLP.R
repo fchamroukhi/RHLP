@@ -1,3 +1,14 @@
+#' A Reference Class which represents a fitted RHLP model.
+#'
+#' FittedRHLP represents a [RHLP][ModelRHLP] model for which parameters have
+#' been estimated.
+#'
+#' @usage NULL
+#' @field modelRHLP A [ModelRHLP][ModelRHLP] object. It contains meta-parameters such as K, p,\dots
+#' @field paramRHLP A [ParamRHLP][ParamRHLP] object. It contains the estimated values of the parameters.
+#' @field statRHLP A [StatRHLP][StatRHLP] object. It contains all the statistics associated to the RHLP model.
+#' @seealso [ModelRHLP], [ParamRHLP], [StatRHLP]
+#' @export
 FittedRHLP <- setRefClass(
   "FittedRHLP",
   fields = list(

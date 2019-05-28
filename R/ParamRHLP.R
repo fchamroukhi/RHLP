@@ -1,3 +1,22 @@
+#' A Reference Class which contains parameters of a RHLP model.
+#'
+#' ParamRHLP contains all the parameters of a [RHLP][ModelRHLP] model.
+#'
+#' @usage NULL
+#' @field W Parameters of the logistic process.
+#' \eqn{W = w_{1},\dots,w_{K-1}}{W = (w1,\dots,wK-1)} is a matrix of dimension
+#' \eqn{(q + 1, K - 1)}, with \emph{q} the order of the logistic
+#' regression.
+#' @field beta Parameters of the polynomial regressions.
+#' \eqn{\beta = (\beta_{1},\dots,\beta_{K})}{\beta = (\beta1,\dots,\betaK)} is
+#' a matrix of dimension \eqn{(p + 1, K)}, with \emph{p} the
+#' order of the polynomial regression.
+#' @field sigma The variances for the \emph{K} regimes. If [RHLP][ModelRHLP]
+#' model is homoskedastic (\emph{variance_type} = 1) then sigma is a matrix of
+#' size \eqn{(1, 1)}, else if [RHLP][ModelRHLP] model is heteroskedastic then
+#' sigma is a matrix of size \eqn{(K, 1)}.
+#' @seealso [ModelRHLP]
+#' @export
 ParamRHLP <- setRefClass(
   "ParamRHLP",
   fields = list(

@@ -1,3 +1,18 @@
+#' A Reference Class which represents a RHLP model.
+#'
+#' ModelRHLP represents a RHLP model. It inherits from [FData][FData] class. It
+#' contains all meta-paramters such as `K`, the number of segments, `p` the
+#' order of the polynomial regression\dots
+#'
+#' @usage NULL
+#' @field K The number of regimes (mixture components).
+#' @field p The order of the polynomial regression.
+#' @field q The dimension of the logistic regression. For the purpose of
+#' segmentation, it must be set to 1.
+#' @field variance_type Numeric indicating if the model is homoskedastic
+#' (`variance_type` = 1) or heteroskedastic (`variance_type` = 2).
+#' @seealso [FData]
+#' @export
 ModelRHLP <- setRefClass(
   "ModelRHLP",
   contains = "FData",

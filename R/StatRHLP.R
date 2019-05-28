@@ -1,3 +1,54 @@
+#' A Reference Class which contains statistics of a RHLP model.
+#'
+#' StatRHLP contains all the parameters of a [RHLP][ModelRHLP] model.
+#'
+#' @usage NULL
+#' @field piik Matrix of size \eqn{(m, K)} representing the probabilities
+#' \eqn{P(zi = k; W) = P(z_{ik} = 1; W)}{P(zi = k; W) = P(z_ik = 1; W)} of the
+#' latent variable \eqn{zi,\ i = 1,\dots,m}{zi, i = 1,\dots,m}.
+#' @field z_ik Hard segmentation logical matrix of dimension \eqn{(m, K)}
+#' obtained by the Maximum a posteriori (MAP) rule:
+#' \eqn{z_{ik} = 1 \ \textrm{if} \ z_{ik} = \textrm{arg} \ \textrm{max}_{k} \
+#' P(z_i = k | Y, W, \beta) = tik;\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
+#' arg max_k P(z_i = k | Y, W, \beta) = tik; 0 otherwise}, \eqn{k = 1,\dots,K}.
+#' @field klas Column matrix of the labels issued from `z_ik`. Its elements are
+#' \eqn{klas(i) = k}, \eqn{k = 1,\dots,K}.
+#' @field Ex Column matrix of dimension \emph{m}. `Ex` is the curve expectation
+#' : sum of the polynomial components \eqn{\beta_{k} \times X_{i}}{\betak x X_i}
+#' weighted by the logistic probabilities `piik`:
+#' \eqn{Ey(i) = \sum_{k = 1}^{K} piik \times \beta_{k} \times X_{i}}{Ey(i) =
+#' \sum_{k=1}^K piik x \betak x X_i}, \eqn{i = 1,\dots,m}.
+#' @field log_lik Numeric. Log-likelihood of the RHLP model.
+#' @field com_loglik Numeric. Complete log-likelihood of the RHLP model.
+#' @field stored_loglik List. Stored values of the log-likelihood at each EM
+#' iteration.
+#' @field BIC Numeric. Value of the BIC (Bayesian Information Criterion)
+#' criterion. The formula is \eqn{BIC = log\_lik - nu \times
+#' \textrm{log}(m) / 2}{BIC = loglik - nu x log(m) / 2} with \emph{nu} the
+#' degree of freedom of the RHLP model.
+#' @field ICL Numeric. Value of the ICL (Integrated Completed Likelihood)
+#' criterion. The formula is \eqn{ICL = com\_loglik - nu \times
+#' \textrm{log}(m) / 2}{ICL = com_loglik - nu x log(m) / 2} with \emph{nu} the
+#' degree of freedom of the RHLP model.
+#' @field AIC Numeric. Value of the AIC (Akaike Information Criterion)
+#' criterion. The formula is \eqn{AIC = log\_lik - nu}{AIC = log_lik - nu}.
+#' @field cpu_time Numeric. Average executon time of a EM step.
+#' @field log_piik_fik Matrix of size \eqn{(m, K)} giving the values of the
+#' logarithm of the joint probability
+#' \eqn{P(Y_{i}, \ zi = k)}{P(Yi, zi = k)}, \eqn{i = 1,\dots,m}.
+#' @field log_sum_piik_fik Column matrix of size \emph{m} giving the values of
+#' \eqn{\sum_{k = 1}^{K} \textrm{log} P(Y_{i}, \ zi = k)}{\sum_{k = 1}^{K} log
+#' P(Yi, zi = k)}, \eqn{i = 1,\dots,m}.
+#' @field tik Matrix of size \eqn{(m, K)} giving the posterior probability that
+#' \eqn{Y_{i}}{Yi} originates from the \eqn{k}-th regression model
+#' \eqn{P(zi = k | Y, W, \beta)}.
+#' @field polynomials Matrix of size \eqn{(m, K)} giving the values of
+#' \eqn{\beta_{k} \times X_{i}}{\betak x X_i}, \eqn{i = 1,\dots,m}.
+#' @field weighted_polynomials Matrix of size \emph{(m, K)} giving the values
+#' of \eqn{piik \times \beta_{k} \times X_{i}}{piik x \betak x X_i},
+#' \eqn{i = 1,\dots,m}.
+#' @seealso [FData]
+#' @export
 StatRHLP <- setRefClass(
   "StatRHLP",
   fields = list(

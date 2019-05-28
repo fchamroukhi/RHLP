@@ -1,3 +1,34 @@
+#' EM is used to fit a RHLP model.
+#'
+#' EM is used to fit a [RHLP][ModelRHLP] model. The estimation method is
+#' performed by the Expectation-Maximization algorithm.
+#'
+#' @details EM function is based on the EM algorithm. This function alternates
+#' between a E Step (method of the class [StatRHLP][StatRHLP]) and a M Step
+#' (method of the class [ParamRHLP][ParamRHLP]) until convergence (until the
+#' absolute difference of log-likelihood between two steps of the EM algorithm
+#' is less than the `threshold` parameter).
+#'
+#' @param modelRHLP A [ModelRHLP][ModelRHLP] object to be fitted.
+#' @param n_tries Number of times EM algorithm will be launched.
+#' The solution providing the highest log-likelihood will be returned.
+#'
+#' If `n_tries` > 1, then for the first pass, parameters are initialized
+#' by uniformly segmenting the data into K segments, and for the next passes,
+#' parameters are initialized by randomly segmenting the data into K contiguous
+#'  segments.
+#' @param max_iter The maximum number of iterations for the EM algorithm.
+#' @param threshold A numeric value specifying the threshold for the relative
+#'  difference of log-likelihood between two steps  of the EM as stopping
+#'  criteria.
+#' @param verbose A logical value indicating whether values of the
+#' log-likelihood should be printed during EM iterations.
+#' @param verbose_IRLS A logical value indicating whether values of the
+#' criterion optimized by IRLS should be printed at each step of the EM
+#' algorithm.
+#' @return EM returns an object of class [FittedRHLP][FittedRHLP].
+#' @seealso [FittedRHLP], [ModelRHLP], [ParamRHLP], [StatRHLP]
+#' @export
 EM <- function(modelRHLP, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
 
   phi <- designmatrix(x = modelRHLP$X, p = modelRHLP$p, q = modelRHLP$q)
