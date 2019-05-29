@@ -37,10 +37,10 @@ FittedRHLP <- setRefClass(
       }
 
       # Probablities of the hidden process (segmentation)
-      plot.default(statRHLP$piik[, 1], type = "l", xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)), col = colorsvec[1], lwd = 1.5)
+      plot.default(statRHLP$pi_ik[, 1], type = "l", xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)), col = colorsvec[1], lwd = 1.5)
       if (modelRHLP$K > 1) {
         for (k in 2:modelRHLP$K) {
-          lines(statRHLP$piik[, k], col = colorsvec[k], lwd = 1.5)
+          lines(statRHLP$pi_ik[, k], col = colorsvec[k], lwd = 1.5)
         }
       }
 

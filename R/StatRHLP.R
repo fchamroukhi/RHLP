@@ -3,22 +3,22 @@
 #' StatRHLP contains all the parameters of a [RHLP][ModelRHLP] model.
 #'
 #' @usage NULL
-#' @field piik Matrix of size \eqn{(m, K)} representing the probabilities
+#' @field pi_ik Matrix of size \eqn{(m, K)} representing the probabilities
 #' \eqn{P(zi = k; W) = P(z_{ik} = 1; W)}{P(zi = k; W) = P(z_ik = 1; W)} of the
 #' latent variable \eqn{zi,\ i = 1,\dots,m}{zi, i = 1,\dots,m}.
 #' @field z_ik Hard segmentation logical matrix of dimension \eqn{(m, K)}
 #' obtained by the Maximum a posteriori (MAP) rule:
 #' \eqn{z_{ik} = 1 \ \textrm{if} \ z_{ik} = \textrm{arg} \ \textrm{max}_{k} \
-#' P(z_i = k | Y, W, \beta) = tik;\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
-#' arg max_k P(z_i = k | Y, W, \beta) = tik; 0 otherwise}, \eqn{k = 1,\dots,K}.
+#' P(z_i = k | Y, W, \beta) = tau_ik;\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
+#' arg max_k P(z_i = k | Y, W, \beta) = tau_ik; 0 otherwise}, \eqn{k = 1,\dots,K}.
 #' @field klas Column matrix of the labels issued from `z_ik`. Its elements are
 #' \eqn{klas(i) = k}, \eqn{k = 1,\dots,K}.
 #' @field Ex Column matrix of dimension \emph{m}. `Ex` is the curve expectation
 #' : sum of the polynomial components \eqn{\beta_{k} \times X_{i}}{\betak x X_i}
-#' weighted by the logistic probabilities `piik`:
-#' \eqn{Ey(i) = \sum_{k = 1}^{K} piik \times \beta_{k} \times X_{i}}{Ey(i) =
-#' \sum_{k=1}^K piik x \betak x X_i}, \eqn{i = 1,\dots,m}.
-#' @field log_lik Numeric. Log-likelihood of the RHLP model.
+#' weighted by the logistic probabilities `pi_ik`:
+#' \eqn{Ey(i) = \sum_{k = 1}^{K} pi_ik \times \beta_{k} \times X_{i}}{Ey(i) =
+#' \sum_{k=1}^K pi_ik x \betak x X_i}, \eqn{i = 1,\dots,m}.
+#' @field loglik Numeric. Log-likelihood of the RHLP model.
 #' @field com_loglik Numeric. Complete log-likelihood of the RHLP model.
 #' @field stored_loglik List. Stored values of the log-likelihood at each EM
 #' iteration.
@@ -31,7 +31,7 @@
 #' \textrm{log}(m) / 2}{ICL = com_loglik - nu x log(m) / 2} with \emph{nu} the
 #' degree of freedom of the RHLP model.
 #' @field AIC Numeric. Value of the AIC (Akaike Information Criterion)
-#' criterion. The formula is \eqn{AIC = log\_lik - nu}{AIC = log_lik - nu}.
+#' criterion. The formula is \eqn{AIC = log\_lik - nu}{AIC = loglik - nu}.
 #' @field cpu_time Numeric. Average executon time of a EM step.
 #' @field log_piik_fik Matrix of size \eqn{(m, K)} giving the values of the
 #' logarithm of the joint probability
@@ -39,24 +39,21 @@
 #' @field log_sum_piik_fik Column matrix of size \emph{m} giving the values of
 #' \eqn{\sum_{k = 1}^{K} \textrm{log} P(Y_{i}, \ zi = k)}{\sum_{k = 1}^{K} log
 #' P(Yi, zi = k)}, \eqn{i = 1,\dots,m}.
-#' @field tik Matrix of size \eqn{(m, K)} giving the posterior probability that
+#' @field tau_ik Matrix of size \eqn{(m, K)} giving the posterior probability that
 #' \eqn{Y_{i}}{Yi} originates from the \eqn{k}-th regression model
 #' \eqn{P(zi = k | Y, W, \beta)}.
 #' @field polynomials Matrix of size \eqn{(m, K)} giving the values of
 #' \eqn{\beta_{k} \times X_{i}}{\betak x X_i}, \eqn{i = 1,\dots,m}.
-#' @field weighted_polynomials Matrix of size \emph{(m, K)} giving the values
-#' of \eqn{piik \times \beta_{k} \times X_{i}}{piik x \betak x X_i},
-#' \eqn{i = 1,\dots,m}.
 #' @seealso [FData]
 #' @export
 StatRHLP <- setRefClass(
   "StatRHLP",
   fields = list(
-    piik = "matrix",
+    pi_ik = "matrix",
     z_ik = "matrix",
     klas = "matrix",
     Ex = "matrix",
-    log_lik = "numeric",
+    loglik = "numeric",
     com_loglik = "numeric",
     stored_loglik = "list",
     stored_com_loglik = "list",
@@ -66,9 +63,8 @@ StatRHLP <- setRefClass(
     cpu_time = "numeric",
     log_piik_fik = "matrix",
     log_sum_piik_fik = "matrix",
-    tik = "matrix",
-    polynomials = "matrix",
-    weighted_polynomials = "matrix"
+    tau_ik = "matrix",
+    polynomials = "matrix"
   ),
   methods = list(
     MAP = function() {
@@ -96,9 +92,9 @@ StatRHLP <- setRefClass(
       #       Z : Hard partition data matrix [nxK] with binary elements Zik such
       #       that z_ik =1 iff z_i = k
       #
-      N <- nrow(piik)
-      K <- ncol(piik)
-      ikmax <- max.col(piik)
+      N <- nrow(pi_ik)
+      K <- ncol(pi_ik)
+      ikmax <- max.col(pi_ik)
       ikmax <- matrix(ikmax, ncol = 1)
       z_ik <<- ikmax %*% ones(1, K) == ones(N, 1) %*% (1:K)
       klas <<- ones(N, 1)
@@ -108,19 +104,18 @@ StatRHLP <- setRefClass(
     },
 
     computeLikelihood = function(reg_irls) {
-      log_lik <<- sum(log_sum_piik_fik) + reg_irls
+      loglik <<- sum(log_sum_piik_fik) + reg_irls
 
     },
 
     computeStats = function(modelRHLP, paramRHLP, phi, cpu_time_all) {
       polynomials <<- phi$XBeta %*% paramRHLP$beta
-      weighted_polynomials <<- piik * polynomials
-      Ex <<- matrix(rowSums(weighted_polynomials))
+      Ex <<- matrix(rowSums(pi_ik * polynomials))
 
       cpu_time <<- mean(cpu_time_all)
 
-      BIC <<- log_lik - (modelRHLP$nu * log(modelRHLP$m) / 2)
-      AIC <<- log_lik - modelRHLP$nu
+      BIC <<- loglik - (modelRHLP$nu * log(modelRHLP$m) / 2)
+      AIC <<- loglik - modelRHLP$nu
 
       zik_log_alphag_fg_xij <- (z_ik) * (log_piik_fik)
       com_loglik <<- sum(rowSums(zik_log_alphag_fg_xij))
@@ -130,7 +125,7 @@ StatRHLP <- setRefClass(
 
     EStep = function(modelRHLP, paramRHLP, phi) {
 
-      piik <<- multinomialLogit(paramRHLP$W, phi$Xw, ones(modelRHLP$m, modelRHLP$K), ones(modelRHLP$m, 1))$piik
+      pi_ik <<- multinomialLogit(paramRHLP$W, phi$Xw, ones(modelRHLP$m, modelRHLP$K), ones(modelRHLP$m, 1))$piik
 
       for (k in (1:K)) {
         muk <- phi$XBeta %*% paramRHLP$beta[, k]
@@ -142,7 +137,7 @@ StatRHLP <- setRefClass(
         }
         z <- ((modelRHLP$Y - muk) ^ 2) / sigmak
         log_piik_fik[, k] <<-
-          log(piik[, k]) - (0.5 * ones(modelRHLP$m, 1) * (log(2 * pi) + log(sigmak))) - (0.5 * z)
+          log(pi_ik[, k]) - (0.5 * ones(modelRHLP$m, 1) * (log(2 * pi) + log(sigmak))) - (0.5 * z)
       }
 
       log_piik_fik <<- pmax(log_piik_fik, log(.Machine$double.xmin))
@@ -151,17 +146,17 @@ StatRHLP <- setRefClass(
       log_fxi <- log(fxi)
       log_sum_piik_fik <<- matrix(log(rowSums(piik_fik)))
       log_tik <- log_piik_fik - log_sum_piik_fik %*% ones(1, modelRHLP$K)
-      tik <<- normalize(exp(log_tik), 2)$M
+      tau_ik <<- normalize(exp(log_tik), 2)$M
     }
   )
 )
 
 StatRHLP <- function(modelRHLP) {
-  piik <- matrix(NA, modelRHLP$m, modelRHLP$K)
+  pi_ik <- matrix(NA, modelRHLP$m, modelRHLP$K)
   z_ik <- matrix(NA, modelRHLP$m, modelRHLP$K)
   klas <- matrix(NA, modelRHLP$m, 1)
   Ex <- matrix(NA, modelRHLP$m, 1)
-  log_lik <- -Inf
+  loglik <- -Inf
   com_loglik <- -Inf
   stored_loglik <- list()
   stored_com_loglik <- list()
@@ -171,17 +166,16 @@ StatRHLP <- function(modelRHLP) {
   cpu_time <- Inf
   log_piik_fik <- matrix(0, modelRHLP$m, modelRHLP$K)
   log_sum_piik_fik <- matrix(NA, modelRHLP$m, 1)
-  tik <- matrix(0, modelRHLP$m, modelRHLP$K)
+  tau_ik <- matrix(0, modelRHLP$m, modelRHLP$K)
   polynomials <- matrix(NA, modelRHLP$m, modelRHLP$K)
-  weighted_polynomials <- matrix(NA, modelRHLP$m, modelRHLP$K)
 
   new(
     "StatRHLP",
-    piik = piik,
+    pi_ik = pi_ik,
     z_ik = z_ik,
     klas = klas,
     Ex = Ex,
-    log_lik = log_lik,
+    loglik = loglik,
     com_loglik = com_loglik,
     stored_loglik = stored_loglik,
     stored_com_loglik = stored_com_loglik,
@@ -191,8 +185,7 @@ StatRHLP <- function(modelRHLP) {
     cpu_time = cpu_time,
     log_piik_fik = log_piik_fik,
     log_sum_piik_fik = log_sum_piik_fik,
-    tik = tik,
-    polynomials = polynomials,
-    weighted_polynomials = weighted_polynomials
+    tau_ik = tau_ik,
+    polynomials = polynomials
   )
 }

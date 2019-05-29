@@ -102,7 +102,7 @@ ParamRHLP <- setRefClass(
         s = 0
       }
       for (k in 1:modelRHLP$K) {
-        weights <- statRHLP$tik[, k] # Post prob of each component k (dimension nx1)
+        weights <- statRHLP$tau_ik[, k] # Post prob of each component k (dimension nx1)
         nk <- sum(weights) # Expected cardinal number of class k
 
         Xk <- phi$XBeta * (sqrt(weights) %*% ones(1, modelRHLP$p + 1)) # [m*(p+1)]
@@ -128,10 +128,10 @@ ParamRHLP <- setRefClass(
 
       # Maximization w.r.t W
       #  IRLS : Iteratively Reweighted Least Squares (for IRLS, see the IJCNN 2009 paper)
-      res_irls <- IRLS(phi$Xw, statRHLP$tik, ones(nrow(statRHLP$tik), 1), W, verbose_IRLS)
+      res_irls <- IRLS(phi$Xw, statRHLP$tau_ik, ones(nrow(statRHLP$tau_ik), 1), W, verbose_IRLS)
 
       W <<- res_irls$W
-      piik <- res_irls$piik
+      pi_ik <- res_irls$piik
       reg_irls <- res_irls$reg_irls
     }
   )
