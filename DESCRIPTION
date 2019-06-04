@@ -17,10 +17,9 @@ Collate:
     enums.R
     utils.R
     FData.R
-    ModelRHLP.R
     ParamRHLP.R
     StatRHLP.R
-    FittedRHLP.R
+    ModelRHLP.R
     ModelLearner.R
 Suggests: 
     knitr,

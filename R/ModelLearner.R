@@ -1,15 +1,25 @@
-#' EM is used to fit a RHLP model.
+#' emRHLP is used to fit a RHLP model.
 #'
-#' EM is used to fit a [RHLP][ModelRHLP] model. The estimation method is
-#' performed by the Expectation-Maximization algorithm.
+#' emRHLP is used to fit a RHLP model. The estimation method is performed by
+#' the Expectation-Maximization algorithm.
 #'
-#' @details EM function is based on the EM algorithm. This function alternates
-#' between a E Step (method of the class [StatRHLP][StatRHLP]) and a M Step
-#' (method of the class [ParamRHLP][ParamRHLP]) until convergence (until the
-#' absolute difference of log-likelihood between two steps of the EM algorithm
-#' is less than the `threshold` parameter).
+#' @details emRHLP function is based on the EM algorithm. This functions starts
+#' with an initialization of the parameters done by the method `initParam` of
+#' the class [ParamRHLP][ParamRHLP], then it alternates between a E-Step
+#' (method of the class [StatRHLP][StatRHLP]) and a M-Step (method of the class
+#' [ParamRHLP][ParamRHLP]) until convergence (until the absolute difference of
+#' log-likelihood between two steps of the EM algorithm is less than the
+#' `threshold` parameter).
 #'
-#' @param modelRHLP A [ModelRHLP][ModelRHLP] object to be fitted.
+#' @param X Numeric vector of length \emph{m} representing the covariates.
+#' @param Y Matrix of size \eqn{(n, m)} representing \emph{n} functions of `X`
+#' observed at points \eqn{1,\dots,m}.
+#' @param K The number of regimes (mixture components).
+#' @param p The order of the polynomial regression.
+#' @param q The dimension of the logistic regression. For the purpose of
+#' segmentation, it must be set to 1.
+#' @param variance_type Numeric indicating if the model is homoskedastic
+#' (`variance_type` = 1) or heteroskedastic (`variance_type` = 2).
 #' @param n_tries Number of times EM algorithm will be launched.
 #' The solution providing the highest log-likelihood will be returned.
 #'
@@ -29,9 +39,9 @@
 #' @return EM returns an object of class [FittedRHLP][FittedRHLP].
 #' @seealso [FittedRHLP], [ModelRHLP], [ParamRHLP], [StatRHLP]
 #' @export
-EM <- function(modelRHLP, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
+emRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
 
-  phi <- designmatrix(x = modelRHLP$X, p = modelRHLP$p, q = modelRHLP$q)
+  fData <- FData$new(X, Y)
 
   top <- 0
   try_EM <- 0
@@ -44,18 +54,18 @@ EM <- function(modelRHLP, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbos
     time <- Sys.time()
 
     # Initialization
-    param <- ParamRHLP(modelRHLP)
-    param$initParam(modelRHLP, phi, try_EM)
+    param <- ParamRHLP$new(fData = fData, K = K, p = p, q = q, variance_type = variance_type)
+    param$initParam(try_EM)
     iter <- 0
     converge <- FALSE
     prev_loglik <- -Inf
 
-    stat <- StatRHLP(modelRHLP)
+    stat <- StatRHLP(paramRHLP = param)
 
     while (!converge && (iter <= max_iter)) {
-      stat$EStep(modelRHLP, param, phi)
+      stat$EStep(param)
 
-      reg_irls <- param$MStep(modelRHLP, stat, phi, verbose_IRLS)
+      reg_irls <- param$MStep(stat, verbose_IRLS)
       stat$computeLikelihood(reg_irls)
 
       iter <- iter + 1
@@ -84,13 +94,13 @@ EM <- function(modelRHLP, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbos
     if (stat$loglik > best_loglik) {
       statSolution <- stat$copy()
       paramSolution <- param$copy()
-      if (modelRHLP$K == 1) {
-        statSolution$tau_ik <- matrix(stat$tau_ik, nrow = modelRHLP$m, ncol = 1)
-        statSolution$pi_ik <- matrix(stat$pi_ik, nrow = modelRHLP$m, ncol = 1)
+      if (param$K == 1) {
+        statSolution$tau_ik <- matrix(stat$tau_ik, nrow = param$fData$m, ncol = 1)
+        statSolution$pi_ik <- matrix(stat$pi_ik, nrow = param$fData$m, ncol = 1)
       }
       else{
-        statSolution$tau_ik <- stat$tau_ik[1:modelRHLP$m, ]
-        statSolution$pi_ik <- stat$pi_ik[1:modelRHLP$m, ]
+        statSolution$tau_ik <- stat$tau_ik[1:param$fData$m, ]
+        statSolution$pi_ik <- stat$pi_ik[1:param$fData$m, ]
       }
 
       best_loglik <- stat$loglik
@@ -108,7 +118,7 @@ EM <- function(modelRHLP, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbos
   }
 
   # Finish the computation of statistics
-  statSolution$computeStats(modelRHLP, paramSolution, phi, cpu_time_all)
+  statSolution$computeStats(paramSolution, cpu_time_all)
 
-  return(FittedRHLP(modelRHLP, paramSolution, statSolution))
+  return(ModelRHLP$new(paramRHLP = paramSolution, statRHLP = statSolution))
 }

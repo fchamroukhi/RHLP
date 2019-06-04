@@ -38,7 +38,6 @@ See `help(package="RHLP")` for further details and references provided by `citat
 
 ```{r}
 data("simulatedtimeserie")
-fData <- FData(simulatedtimeserie$X, t(simulatedtimeserie$Y))
 ```
 
 # Set up RHLP model parameters
@@ -48,8 +47,6 @@ K <- 5 # number of regimes (mixture components)
 p <- 3 # dimension of beta (order of the polynomial regressors)
 q <- 1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
 variance_type <- variance_types$heteroskedastic
-
-modelRHLP <- ModelRHLP(fData, K, p, q, variance_type)
 ```
 
 # Set up EM parameters
@@ -65,7 +62,8 @@ verbose_IRLS <- FALSE
 # Estimation
 
 ```{r}
-solution <- EM(modelRHLP, n_tries, max_iter, threshold, verbose, verbose_IRLS)
+solution <- emRHLP(simulatedtimeserie$X, t(simulatedtimeserie$Y), K, p, q, 
+                   variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 
 

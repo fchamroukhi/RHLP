@@ -1,8 +1,7 @@
 #' A Reference Class which contains statistics of a RHLP model.
 #'
-#' StatRHLP contains all the parameters of a [RHLP][ModelRHLP] model.
+#' StatRHLP contains all the parameters of a [RHLP][ParamRHLP] model.
 #'
-#' @usage NULL
 #' @field pi_ik Matrix of size \eqn{(m, K)} representing the probabilities
 #' \eqn{P(zi = k; W) = P(z_{ik} = 1; W)}{P(zi = k; W) = P(z_ik = 1; W)} of the
 #' latent variable \eqn{zi,\ i = 1,\dots,m}{zi, i = 1,\dots,m}.
@@ -44,7 +43,7 @@
 #' \eqn{P(zi = k | Y, W, \beta)}.
 #' @field polynomials Matrix of size \eqn{(m, K)} giving the values of
 #' \eqn{\beta_{k} \times X_{i}}{\betak x X_i}, \eqn{i = 1,\dots,m}.
-#' @seealso [FData]
+#' @seealso [ParamRHLP], [FData]
 #' @export
 StatRHLP <- setRefClass(
   "StatRHLP",
@@ -67,6 +66,28 @@ StatRHLP <- setRefClass(
     polynomials = "matrix"
   ),
   methods = list(
+
+    initialize = function(paramRHLP = ParamRHLP(fData = FData(numeric(1), matrix(1)), K = 1, p = 2, q = 1, variance_type = 1)) {
+
+      pi_ik <<- matrix(NA, paramRHLP$fData$m, paramRHLP$K)
+      z_ik <<- matrix(NA, paramRHLP$fData$m, paramRHLP$K)
+      klas <<- matrix(NA, paramRHLP$fData$m, 1)
+      Ex <<- matrix(NA, paramRHLP$fData$m, 1)
+      loglik <<- -Inf
+      com_loglik <<- -Inf
+      stored_loglik <<- list()
+      stored_com_loglik <<- list()
+      BIC <<- -Inf
+      ICL <<- -Inf
+      AIC <<- -Inf
+      cpu_time <<- Inf
+      log_piik_fik <<- matrix(0, paramRHLP$fData$m, paramRHLP$K)
+      log_sum_piik_fik <<- matrix(NA, paramRHLP$fData$m, 1)
+      tau_ik <<- matrix(0, paramRHLP$fData$m, paramRHLP$K)
+      polynomials <<- matrix(NA, paramRHLP$fData$m, paramRHLP$K)
+
+    },
+
     MAP = function() {
       ###########################################################################
       # function [klas, Z] = MAP(PostProbs)
@@ -108,36 +129,38 @@ StatRHLP <- setRefClass(
 
     },
 
-    computeStats = function(modelRHLP, paramRHLP, phi, cpu_time_all) {
-      polynomials <<- phi$XBeta %*% paramRHLP$beta
+    computeStats = function(paramRHLP, cpu_time_all) {
+
+      polynomials <<- paramRHLP$phi$XBeta %*% paramRHLP$beta
       Ex <<- matrix(rowSums(pi_ik * polynomials))
 
       cpu_time <<- mean(cpu_time_all)
 
-      BIC <<- loglik - (modelRHLP$nu * log(modelRHLP$m) / 2)
-      AIC <<- loglik - modelRHLP$nu
+      BIC <<- loglik - (paramRHLP$nu * log(paramRHLP$fData$m) / 2)
+      AIC <<- loglik - paramRHLP$nu
 
       zik_log_alphag_fg_xij <- (z_ik) * (log_piik_fik)
       com_loglik <<- sum(rowSums(zik_log_alphag_fg_xij))
-      ICL <<- com_loglik - modelRHLP$nu * log(modelRHLP$m) / 2
+      ICL <<- com_loglik - paramRHLP$nu * log(paramRHLP$fData$m) / 2
 
     },
 
-    EStep = function(modelRHLP, paramRHLP, phi) {
+    EStep = function(paramRHLP) {
+      "Method used in the EM algorithm to update statistics based on parameters
+      provided by \\code{paramRHLP} (prior and posterior probabilities)."
+      pi_ik <<- multinomialLogit(paramRHLP$W, paramRHLP$phi$Xw, ones(paramRHLP$fData$m, paramRHLP$K), ones(paramRHLP$fData$m, 1))$piik
 
-      pi_ik <<- multinomialLogit(paramRHLP$W, phi$Xw, ones(modelRHLP$m, modelRHLP$K), ones(modelRHLP$m, 1))$piik
+      for (k in (1:paramRHLP$K)) {
+        muk <- paramRHLP$phi$XBeta %*% paramRHLP$beta[, k]
 
-      for (k in (1:K)) {
-        muk <- phi$XBeta %*% paramRHLP$beta[, k]
-
-        if (modelRHLP$variance_type == variance_types$homoskedastic) {
+        if (paramRHLP$variance_type == variance_types$homoskedastic) {
           sigmak <-  paramRHLP$sigma[1]
         } else {
           sigmak <- paramRHLP$sigma[k]
         }
-        z <- ((modelRHLP$Y - muk) ^ 2) / sigmak
+        z <- ((paramRHLP$fData$Y - muk) ^ 2) / sigmak
         log_piik_fik[, k] <<-
-          log(pi_ik[, k]) - (0.5 * ones(modelRHLP$m, 1) * (log(2 * pi) + log(sigmak))) - (0.5 * z)
+          log(pi_ik[, k]) - (0.5 * ones(paramRHLP$fData$m, 1) * (log(2 * pi) + log(sigmak))) - (0.5 * z)
       }
 
       log_piik_fik <<- pmax(log_piik_fik, log(.Machine$double.xmin))
@@ -145,47 +168,8 @@ StatRHLP <- setRefClass(
       fxi <- rowSums(piik_fik)
       log_fxi <- log(fxi)
       log_sum_piik_fik <<- matrix(log(rowSums(piik_fik)))
-      log_tik <- log_piik_fik - log_sum_piik_fik %*% ones(1, modelRHLP$K)
+      log_tik <- log_piik_fik - log_sum_piik_fik %*% ones(1, paramRHLP$K)
       tau_ik <<- normalize(exp(log_tik), 2)$M
     }
   )
 )
-
-StatRHLP <- function(modelRHLP) {
-  pi_ik <- matrix(NA, modelRHLP$m, modelRHLP$K)
-  z_ik <- matrix(NA, modelRHLP$m, modelRHLP$K)
-  klas <- matrix(NA, modelRHLP$m, 1)
-  Ex <- matrix(NA, modelRHLP$m, 1)
-  loglik <- -Inf
-  com_loglik <- -Inf
-  stored_loglik <- list()
-  stored_com_loglik <- list()
-  BIC <- -Inf
-  ICL <- -Inf
-  AIC <- -Inf
-  cpu_time <- Inf
-  log_piik_fik <- matrix(0, modelRHLP$m, modelRHLP$K)
-  log_sum_piik_fik <- matrix(NA, modelRHLP$m, 1)
-  tau_ik <- matrix(0, modelRHLP$m, modelRHLP$K)
-  polynomials <- matrix(NA, modelRHLP$m, modelRHLP$K)
-
-  new(
-    "StatRHLP",
-    pi_ik = pi_ik,
-    z_ik = z_ik,
-    klas = klas,
-    Ex = Ex,
-    loglik = loglik,
-    com_loglik = com_loglik,
-    stored_loglik = stored_loglik,
-    stored_com_loglik = stored_com_loglik,
-    BIC = BIC,
-    ICL = ICL,
-    AIC = AIC,
-    cpu_time = cpu_time,
-    log_piik_fik = log_piik_fik,
-    log_sum_piik_fik = log_sum_piik_fik,
-    tau_ik = tau_ik,
-    polynomials = polynomials
-  )
-}

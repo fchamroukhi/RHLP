@@ -17,21 +17,23 @@ FData <- setRefClass(
     m = "numeric",
     n = "numeric",
     vecY = "matrix"
+  ),
+  methods = list(
+
+    initialize = function(X = numeric(1), Y = matrix(1)) {
+
+      X <<- X
+      Y <<- as.matrix(Y)
+
+      n <<- nrow(Y)
+      m <<- ncol(Y)
+
+      vecY <<- matrix(t(Y), ncol = 1)
+
+      if (n == 1) {
+        Y <<- t(Y)
+      }
+
+    }
   )
 )
-
-FData <- function(X, Y) {
-
-  Y <- as.matrix(Y)
-
-  n <- nrow(Y)
-  m <- ncol(Y)
-
-  vecY <- matrix(t(Y), ncol = 1)
-
-  if (n == 1) {
-    Y <- t(Y)
-  }
-
-  fData <- new("FData", X = X, Y = Y, m = m, n = n, vecY = vecY)
-}
