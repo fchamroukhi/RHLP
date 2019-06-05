@@ -36,12 +36,12 @@
 #' @param verbose_IRLS A logical value indicating whether values of the
 #' criterion optimized by IRLS should be printed at each step of the EM
 #' algorithm.
-#' @return EM returns an object of class [FittedRHLP][FittedRHLP].
-#' @seealso [FittedRHLP], [ModelRHLP], [ParamRHLP], [StatRHLP]
+#' @return EM returns an object of class [ModelRHLP][ModelRHLP].
+#' @seealso [ModelRHLP], [ParamRHLP], [StatRHLP]
 #' @export
 emRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
 
-  fData <- FData$new(X, Y)
+  fData <- FData(X, Y)
 
   top <- 0
   try_EM <- 0

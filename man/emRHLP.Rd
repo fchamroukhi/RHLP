@@ -46,7 +46,7 @@ criterion optimized by IRLS should be printed at each step of the EM
 algorithm.}
 }
 \value{
-EM returns an object of class \link{FittedRHLP}.
+EM returns an object of class \link{ModelRHLP}.
 }
 \description{
 emRHLP is used to fit a RHLP model. The estimation method is performed by
@@ -62,5 +62,5 @@ log-likelihood between two steps of the EM algorithm is less than the
 \code{threshold} parameter).
 }
 \seealso{
-\link{FittedRHLP}, \link{ModelRHLP}, \link{ParamRHLP}, \link{StatRHLP}
+\link{ModelRHLP}, \link{ParamRHLP}, \link{StatRHLP}
 }
