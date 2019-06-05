@@ -32,9 +32,9 @@ segmentation, it must be set to 1.}
 a matrix of dimension \eqn{(p + 1, K)}, with \emph{p} the order of the
 polynomial regression.}
 
-\item{\code{sigma}}{The variances for the \emph{K} regimes. If RHLP model is
-homoskedastic (\emph{variance_type} = 1) then sigma is a matrix of size
-\eqn{(1, 1)}, else if RHLP model is heteroskedastic then sigma is a matrix
+\item{\code{sigma2}}{The variances for the \emph{K} regimes. If RHLP model is
+homoskedastic (\emph{variance_type} = 1) then sigma2 is a matrix of size
+\eqn{(1, 1)}, else if RHLP model is heteroskedastic then sigma2 is a matrix
 of size \eqn{(K, 1)}.}
 }}
 
@@ -42,11 +42,11 @@ of size \eqn{(K, 1)}.}
 
 \describe{
 \item{\code{initParam(try_algo = 1)}}{Method to initialize parameters \code{W}, \code{beta} and
-      \code{sigma}.
+      \code{sigma2}.
 
-      If try_algo = 1 then \code{W}, \code{beta} and \code{sigma} are
+      If try_algo = 1 then \code{W}, \code{beta} and \code{sigma2} are
       initialized by segmenting uniformly into \code{K} contiguous segments
-      the response Y. Otherwise, \code{W}, \code{beta} and \code{sigma} are
+      the response Y. Otherwise, \code{W}, \code{beta} and \code{sigma2} are
       initialized by segmenting randomly into \code{K} segments the response Y.}
 
 \item{\code{MStep(statRHLP, verbose_IRLS)}}{Method used in the EM algorithm to learn the parameters of the RHLP model
