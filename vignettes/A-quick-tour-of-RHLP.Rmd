@@ -66,6 +66,11 @@ solution <- emRHLP(simulatedtimeserie$X, t(simulatedtimeserie$Y), K, p, q,
                    variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 
+# Summary
+
+```{r}
+solution$summary()
+```
 
 # Plots
 

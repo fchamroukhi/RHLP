@@ -58,6 +58,52 @@ ModelRHLP <- setRefClass(
       # Probablities of the hidden process (segmentation)
       plot.default(paramRHLP$fData$X, statRHLP$klas, type = "l", xlab = "x", ylab = "Estimated class labels", col = "red", lwd = 1.5, yaxt = "n")
       axis(side = 2, at=1:paramRHLP$K)
+    },
+
+    summary = function() {
+
+      digits = getOption("digits")
+
+      title <- paste("Fitted RHLP model")
+      txt <- paste(rep("-", min(nchar(title) + 4, getOption("width"))), collapse = "")
+
+      # Title
+      cat(txt)
+      cat("\n")
+      cat(title)
+      cat("\n")
+      cat(txt)
+
+      cat("\n")
+      cat("\n")
+      cat(paste0("RHLP model with ", paramRHLP$K, ifelse(paramRHLP$K > 1, " components", " component"), ":"))
+      cat("\n")
+      cat("\n")
+
+      tab <- data.frame("log-likelihood" = statRHLP$loglik, "nu" = paramRHLP$nu, "AIC" = statRHLP$AIC,
+                        "BIC" = statRHLP$BIC, "ICL" = statRHLP$ICL, row.names = "", check.names = FALSE)
+      print(tab, digits = digits)
+
+      cat("\nClustering table:")
+      print(table(statRHLP$klas))
+
+      cat("\nRegressors:\n")
+      row.names = ifelse(paramRHLP$p > 0, c("1", sapply(1:paramRHLP$p, function(x) paste0("X^", x))), "1")
+
+      betas <- data.frame(paramRHLP$beta, row.names = row.names)
+      colnames(betas) <- sapply(1:paramRHLP$K, function(x) paste0("Beta", x))
+      print(betas, digits = digits)
+
+      cat("\nVariances:\n")
+      sigma2 = data.frame(t(paramRHLP$sigma2), row.names = NULL)
+      if (paramRHLP$variance_type == variance_types$homoskedastic) {
+        colnames(sigma2) = "Sigma2"
+        print(sigma2, digits = digits, row.names = FALSE)
+      } else {
+        colnames(sigma2) = sapply(1:paramRHLP$K, function(x) paste0("Sigma2[", x, "]"))
+        print(sigma2, digits = digits, row.names = FALSE)
+      }
+
     }
   )
 )
