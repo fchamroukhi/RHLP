@@ -88,7 +88,11 @@ ModelRHLP <- setRefClass(
       print(table(statRHLP$klas))
 
       cat("\nRegressors:\n")
-      row.names = ifelse(paramRHLP$p > 0, c("1", sapply(1:paramRHLP$p, function(x) paste0("X^", x))), "1")
+      if (paramRHLP$p > 0) {
+        row.names = c("1", sapply(1:paramRHLP$p, function(x) paste0("X^", x)))
+      } else {
+        row.names = "1"
+      }
 
       betas <- data.frame(paramRHLP$beta, row.names = row.names)
       colnames(betas) <- sapply(1:paramRHLP$K, function(x) paste0("Beta", x))
