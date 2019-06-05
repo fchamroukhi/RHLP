@@ -154,9 +154,9 @@ StatRHLP <- setRefClass(
         muk <- paramRHLP$phi$XBeta %*% paramRHLP$beta[, k]
 
         if (paramRHLP$variance_type == variance_types$homoskedastic) {
-          sigmak <-  paramRHLP$sigma[1]
+          sigmak <-  paramRHLP$sigma2[1]
         } else {
-          sigmak <- paramRHLP$sigma[k]
+          sigmak <- paramRHLP$sigma2[k]
         }
         z <- ((paramRHLP$fData$Y - muk) ^ 2) / sigmak
         log_piik_fik[, k] <<-

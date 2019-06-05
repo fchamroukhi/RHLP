@@ -16,9 +16,9 @@
 #' \eqn{\beta = (\beta_{1},\dots,\beta_{K})}{\beta = (\beta1,\dots,\betaK)} is
 #' a matrix of dimension \eqn{(p + 1, K)}, with \emph{p} the order of the
 #' polynomial regression.
-#' @field sigma The variances for the \emph{K} regimes. If RHLP model is
-#' homoskedastic (\emph{variance_type} = 1) then sigma is a matrix of size
-#' \eqn{(1, 1)}, else if RHLP model is heteroskedastic then sigma is a matrix
+#' @field sigma2 The variances for the \emph{K} regimes. If RHLP model is
+#' homoskedastic (\emph{variance_type} = 1) then sigma2 is a matrix of size
+#' \eqn{(1, 1)}, else if RHLP model is heteroskedastic then sigma2 is a matrix
 #' of size \eqn{(K, 1)}.
 #' @seealso [FData]
 #' @export
@@ -36,7 +36,7 @@ ParamRHLP <- setRefClass(
 
     W = "matrix",
     beta = "matrix",
-    sigma = "matrix"
+    sigma2 = "matrix"
   ),
   methods = list(
 
@@ -61,21 +61,21 @@ ParamRHLP <- setRefClass(
       beta <<- matrix(NA, p + 1, K)
 
       if (variance_type == variance_types$homoskedastic) {
-        sigma <<- matrix(NA)
+        sigma2 <<- matrix(NA)
       }
       else{
-        sigma <<- matrix(NA, K)
+        sigma2 <<- matrix(NA, K)
       }
 
     },
 
     initParam = function(try_algo = 1) {
       "Method to initialize parameters \\code{W}, \\code{beta} and
-      \\code{sigma}.
+      \\code{sigma2}.
 
-      If try_algo = 1 then \\code{W}, \\code{beta} and \\code{sigma} are
+      If try_algo = 1 then \\code{W}, \\code{beta} and \\code{sigma2} are
       initialized by segmenting uniformly into \\code{K} contiguous segments
-      the response Y. Otherwise, \\code{W}, \\code{beta} and \\code{sigma} are
+      the response Y. Otherwise, \\code{W}, \\code{beta} and \\code{sigma2} are
       initialized by segmenting randomly into \\code{K} segments the response Y."
       if (try_algo == 1) { # Uniform segmentation into K contiguous segments, and then a regression
 
@@ -97,10 +97,10 @@ ParamRHLP <- setRefClass(
           beta[, k] <<- bk
 
           if (variance_type == variance_types$homoskedastic) {
-            sigma <<- matrix(1)
+            sigma2 <<- matrix(1)
           }
           else{
-            sigma[k] <<- var(yij)
+            sigma2[k] <<- var(yij)
           }
         }
       } else{# Random segmentation into K contiguous segments, and then a regression
@@ -136,10 +136,10 @@ ParamRHLP <- setRefClass(
           beta[, k] <<- bk
 
           if (variance_type == variance_types$homoskedastic) {
-            sigma <<- var(fData$Y)
+            sigma2 <<- var(fData$Y)
           }
           else{
-            sigma[k] <<- 1
+            sigma2[k] <<- 1
           }
         }
       }
@@ -171,9 +171,9 @@ ParamRHLP <- setRefClass(
 
         if (variance_type == variance_types$homoskedastic) {
           s <- s + sk
-          sigma <<- s / fData$m
+          sigma2 <<- s / fData$m
         } else {
-          sigma[k] <<- sk / nk
+          sigma2[k] <<- sk / nk
         }
       }
 
