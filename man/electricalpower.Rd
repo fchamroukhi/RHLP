@@ -3,7 +3,7 @@
 \docType{data}
 \name{electricalpower}
 \alias{electricalpower}
-\title{Electrical power consumption during a switch operation}
+\title{Time series representing electrical power consumption during a switch operation}
 \format{A data frame with 562 rows and 3 columns:
 \describe{
 \item{X}{The covariate variable which is the time in that case.}
