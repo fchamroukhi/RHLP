@@ -1,5 +1,5 @@
-Package: RHLP
 Type: Package
+Package: RHLP
 Title: Regression with Hidden Logistic Process (RHLP) for Flexible Probabilistic
     Segmentation of Time Series with Regimes Changes
 Version: 0.1.0
@@ -9,12 +9,22 @@ Authors@R: c(person("Faicel", "Chamroukhi", role = c("aut"),
     person("Marius", "Bartcus", role = c("aut")),
     person("Florian", "Lecocq", role = c("aut", "cre"),
     email = "florian.lecocq@outlook.com"))
-Description: Flexible and user-friendly probabilisitic segmentation of time series with smooth and/or abrupt regime changes by a mixture model-based regression approach with a hidden logistic process, fitted by the EM algorithm. See also the package 'MRHLP'.
+Description: Flexible and user-friendly probabilistic segmentation of time series with
+    smooth and/or abrupt regime changes by a mixture model-based regression approach
+    with a hidden logistic process, fitted by the EM algorithm. See also the package 'MRHLP'.
 License: GPL (>= 3)
 Depends: 
     R (>= 2.10)
-Encoding: UTF-8
-LazyData: true
+Imports: 
+    methods,
+    stats,
+    Rcpp
+Suggests: 
+    knitr,
+    rmarkdown
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
 Collate:
     RHLP-package.R
     RcppExports.R
@@ -27,16 +37,8 @@ Collate:
     ModelLearner.R
     data-electricalpower.R
     data-simulatedtimeserie.R
-Suggests: 
-    knitr,
-    rmarkdown
 VignetteBuilder: knitr
+Encoding: UTF-8
+LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
-LinkingTo: 
-    Rcpp,
-    RcppArmadillo
-Imports: 
-    methods,
-    stats,
-    Rcpp
