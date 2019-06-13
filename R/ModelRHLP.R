@@ -52,7 +52,7 @@ ModelRHLP <- setRefClass(
       # Transition time points
       tk <- which(diff(statRHLP$klas) != 0)
       for (i in 1:length(tk)) {
-        abline(v = tk[i], col = "red", lty = "dotted", lwd = 1.5)
+        abline(v = paramRHLP$fData$X[tk[i]], col = "red", lty = "dotted", lwd = 1.5)
       }
 
       # Probablities of the hidden process (segmentation)
