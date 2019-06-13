@@ -76,7 +76,7 @@ ModelRHLP <- setRefClass(
 
       cat("\n")
       cat("\n")
-      cat(paste0("RHLP model with ", paramRHLP$K, ifelse(paramRHLP$K > 1, " components", " component"), ":"))
+      cat(paste0("RHLP model with K = ", paramRHLP$K, ifelse(paramRHLP$K > 1, " components", " component"), ":"))
       cat("\n")
       cat("\n")
 
@@ -84,10 +84,10 @@ ModelRHLP <- setRefClass(
                         "BIC" = statRHLP$BIC, "ICL" = statRHLP$ICL, row.names = "", check.names = FALSE)
       print(tab, digits = digits)
 
-      cat("\nClustering table:")
+      cat("\nClustering table (Number of observations in each regimes):\n")
       print(table(statRHLP$klas))
 
-      cat("\nRegressors:\n")
+      cat("\nRegression coefficients:\n\n")
       if (paramRHLP$p > 0) {
         row.names = c("1", sapply(1:paramRHLP$p, function(x) paste0("X^", x)))
       } else {
@@ -95,16 +95,17 @@ ModelRHLP <- setRefClass(
       }
 
       betas <- data.frame(paramRHLP$beta, row.names = row.names)
-      colnames(betas) <- sapply(1:paramRHLP$K, function(x) paste0("Beta", x))
+      colnames(betas) <- sapply(1:paramRHLP$K, function(x) paste0("Beta(K = ", x, ")"))
       print(betas, digits = digits)
 
-      cat("\nVariances:\n")
+      cat(paste0(ifelse(paramRHLP$variance_type == variance_types$homoskedastic, "\n\n",
+                        "\nVariances:\n\n")))
       sigma2 = data.frame(t(paramRHLP$sigma2), row.names = NULL)
       if (paramRHLP$variance_type == variance_types$homoskedastic) {
         colnames(sigma2) = "Sigma2"
         print(sigma2, digits = digits, row.names = FALSE)
       } else {
-        colnames(sigma2) = sapply(1:paramRHLP$K, function(x) paste0("Sigma2[", x, "]"))
+        colnames(sigma2) = sapply(1:paramRHLP$K, function(x) paste0("Sigma2(K = ", x, ")"))
         print(sigma2, digits = digits, row.names = FALSE)
       }
 
