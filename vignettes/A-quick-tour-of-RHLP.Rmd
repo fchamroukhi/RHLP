@@ -74,6 +74,14 @@ solution$summary()
 
 # Plots
 
+## Fitted regressors
+
 ```{r}
-solution$plot()
+solution$plot(what = "regressors")
+```
+
+## Mean curve
+
+```{r}
+solution$plot(what = "meancurve")
 ```
