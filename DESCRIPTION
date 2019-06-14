@@ -35,6 +35,7 @@ Collate:
     StatRHLP.R
     ModelRHLP.R
     ModelLearner.R
+    ModelSelection.R
     data-electricalpower.R
     data-simulatedtimeserie.R
 VignetteBuilder: knitr

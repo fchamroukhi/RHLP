@@ -50,7 +50,10 @@ emRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter =
 
   while (try_EM < n_tries) {
     try_EM <- try_EM + 1
-    message("EM try nr ", try_EM)
+
+    if (verbose) {
+      cat(paste0("EM try number: ", try_EM, "\n\n"))
+    }
     time <- Sys.time()
 
     # Initialization
@@ -70,10 +73,12 @@ emRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter =
 
       iter <- iter + 1
       if (verbose) {
-        message("EM     : Iteration : ", iter, "  log-likelihood : "  , stat$loglik)
+        cat(paste0("EM: Iteration : ", iter, " || log-likelihood : "  , stat$loglik, "\n"))
       }
       if (prev_loglik - stat$loglik > 1e-5) {
-        message("!!!!! EM log-likelihood is decreasing from ", prev_loglik, "to ", stat$loglik)
+        if (verbose) {
+          warning(paste0("EM log-likelihood is decreasing from ", prev_loglik, "to ", stat$loglik, " !"))
+        }
         top <- top + 1
         if (top > 20)
           break
@@ -106,7 +111,7 @@ emRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter =
       best_loglik <- stat$loglik
     }
     if (n_tries > 1) {
-      message("max value: ", stat$loglik)
+      cat(paste0("Max value of the log-likelihood: ", stat$loglik, "\n"))
     }
   }
 
@@ -114,7 +119,7 @@ emRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter =
   statSolution$MAP()
 
   if (n_tries > 1) {
-    message("max value: ", statSolution$loglik)
+    cat(paste0("Max value of the log-likelihood: ", statSolution$loglik, "\n"))
   }
 
   # Finish the computation of statistics
