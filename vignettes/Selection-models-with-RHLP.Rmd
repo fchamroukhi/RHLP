@@ -51,7 +51,7 @@ plot(simulatedtimeserie$X, simulatedtimeserie$Y, type = "l", xlab = "x", ylab = 
 # Model selection based on BIC
 
 ```{r}
-selectedrhlp <- selectRHLP(X = simulatedtimeserie$X, t(simulatedtimeserie$Y))
+selectedrhlp <- selectRHLP(X = simulatedtimeserie$X, t(simulatedtimeserie$Y), Kmin = 2, Kmax = 6, pmin = 0, pmax = 3)
 ```
 
 The selected model has $K = 5$ regimes and the order of the polynomial regression is
