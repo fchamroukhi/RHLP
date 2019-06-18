@@ -24,18 +24,21 @@ segmentation, it must be set to 1.}
 (\code{variance_type} = 1) or heteroskedastic (\code{variance_type} = 2).}
 
 \item{\code{W}}{Parameters of the logistic process.
-\eqn{W = w_{1},\dots,w_{K-1}}{W = (w1,\dots,wK-1)} is a matrix of dimension
+\eqn{W = (w_{1},\dots,w_{K-1})} is a matrix of dimension
 \eqn{(q + 1, K - 1)}, with \emph{q} the order of the logistic regression.}
 
 \item{\code{beta}}{Parameters of the polynomial regressions.
-\eqn{\beta = (\beta_{1},\dots,\beta_{K})}{\beta = (\beta1,\dots,\betaK)} is
-a matrix of dimension \eqn{(p + 1, K)}, with \emph{p} the order of the
-polynomial regression.}
+\eqn{\beta = (\beta_{1},\dots,\beta_{K})} is a matrix of dimension
+\eqn{(p + 1, K)}, with \emph{p} the order of the polynomial regression.}
 
 \item{\code{sigma2}}{The variances for the \emph{K} regimes. If RHLP model is
-homoskedastic (\emph{variance_type} = 1) then sigma2 is a matrix of size
-\eqn{(1, 1)}, else if RHLP model is heteroskedastic then sigma2 is a matrix
-of size \eqn{(K, 1)}.}
+homoskedastic (\code{variance_type} = 1) then sigma2 is a matrix of size
+\eqn{(1, 1)}, else if RHLP model is heteroskedastic (\code{variance_type} = 2)
+then sigma2 is a matrix of size \eqn{(K, 1)}.}
+
+\item{\code{nu}}{The degree of freedom of the RHLP model.}
+
+\item{\code{phi}}{A list giving the matrices for the polynomial and the logistic regressions.}
 }}
 
 \section{Methods}{
@@ -47,7 +50,7 @@ of size \eqn{(K, 1)}.}
       If try_algo = 1 then \code{W}, \code{beta} and \code{sigma2} are
       initialized by segmenting uniformly into \code{K} contiguous segments
       the response Y. Otherwise, \code{W}, \code{beta} and \code{sigma2} are
-      initialized by segmenting randomly into \code{K} segments the response Y.}
+      initialized by segmenting randomly the response Y into \code{K} segments.}
 
 \item{\code{MStep(statRHLP, verbose_IRLS)}}{Method used in the EM algorithm to learn the parameters of the RHLP model
 based on statistics provided by \code{statRHLP}.}

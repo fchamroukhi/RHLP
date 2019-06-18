@@ -12,13 +12,13 @@ StatRHLP contains all the parameters of a \link[=ParamRHLP]{RHLP} model.
 
 \describe{
 \item{\code{pi_ik}}{Matrix of size \eqn{(m, K)} representing the probabilities
-\eqn{P(zi = k; W) = P(z_{ik} = 1; W)}{P(zi = k; W) = P(z_ik = 1; W)} of the
+\eqn{P(zi = k; W) = P(z\_ik = 1; W)}{P(zi = k; W) = P(z_ik = 1; W)} of the
 latent variable \eqn{zi,\ i = 1,\dots,m}{zi, i = 1,\dots,m}.}
 
 \item{\code{z_ik}}{Hard segmentation logical matrix of dimension \eqn{(m, K)}
 obtained by the Maximum a posteriori (MAP) rule:
-\eqn{z_{ik} = 1 \ \textrm{if} \ z_{ik} = \textrm{arg} \ \textrm{max}_{k} \
-P(z_i = k | Y, W, \beta) = tau_ik;\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
+\eqn{z\_ik = 1 \ \textrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{k} \
+P(zi = k | Y, W, \beta) = tau\_ik;\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
 arg max_k P(z_i = k | Y, W, \beta) = tau_ik; 0 otherwise}, \eqn{k = 1,\dots,K}.}
 
 \item{\code{klas}}{Column matrix of the labels issued from \code{z_ik}. Its elements are
@@ -27,7 +27,7 @@ arg max_k P(z_i = k | Y, W, \beta) = tau_ik; 0 otherwise}, \eqn{k = 1,\dots,K}.}
 \item{\code{Ex}}{Column matrix of dimension \emph{m}. \code{Ex} is the curve expectation
 : sum of the polynomial components \eqn{\beta_{k} \times X_{i}}{\betak x X_i}
 weighted by the logistic probabilities \code{pi_ik}:
-\eqn{Ey(i) = \sum_{k = 1}^{K} pi_ik \times \beta_{k} \times X_{i}}{Ey(i) =
+\eqn{Ey(i) = \sum_{k = 1}^{K} pi\_ik \times \beta_{k} \times X_{i}}{Ey(i) =
 \sum_{k=1}^K pi_ik x \betak x X_i}, \eqn{i = 1,\dots,m}.}
 
 \item{\code{loglik}}{Numeric. Log-likelihood of the RHLP model.}
@@ -37,20 +37,23 @@ weighted by the logistic probabilities \code{pi_ik}:
 \item{\code{stored_loglik}}{List. Stored values of the log-likelihood at each EM
 iteration.}
 
+\item{\code{stored_com_loglik}}{List. Stored values of the Complete log-likelihood
+at each EM iteration.}
+
 \item{\code{BIC}}{Numeric. Value of the BIC (Bayesian Information Criterion)
-criterion. The formula is \eqn{BIC = log\_lik - nu \times
-\textrm{log}(m) / 2}{BIC = loglik - nu x log(m) / 2} with \emph{nu} the
+criterion. The formula is \eqn{BIC = loglik - nu \times
+\textrm{log}(m) / 2}{BIC = loglik - nu x log(m) / 2} with \code{nu} the
 degree of freedom of the RHLP model.}
 
 \item{\code{ICL}}{Numeric. Value of the ICL (Integrated Completed Likelihood)
 criterion. The formula is \eqn{ICL = com\_loglik - nu \times
-\textrm{log}(m) / 2}{ICL = com_loglik - nu x log(m) / 2} with \emph{nu} the
+\textrm{log}(m) / 2}{ICL = com_loglik - nu x log(m) / 2} with \code{nu} the
 degree of freedom of the RHLP model.}
 
 \item{\code{AIC}}{Numeric. Value of the AIC (Akaike Information Criterion)
-criterion. The formula is \eqn{AIC = log\_lik - nu}{AIC = loglik - nu}.}
+criterion. The formula is \eqn{AIC = loglik - nu}{AIC = loglik - nu}.}
 
-\item{\code{cpu_time}}{Numeric. Average executon time of a EM step.}
+\item{\code{cpu_time}}{Numeric. Average executon time of a EM algorithm run.}
 
 \item{\code{log_piik_fik}}{Matrix of size \eqn{(m, K)} giving the values of the
 logarithm of the joint probability
@@ -71,8 +74,22 @@ P(Yi, zi = k)}, \eqn{i = 1,\dots,m}.}
 \section{Methods}{
 
 \describe{
+\item{\code{computeLikelihood(reg_irls)}}{Method to compute the log-likelihood. \code{reg_irls} is the value of
+the regularization part in the IRLS algorithm.}
+
+\item{\code{computeStats(paramRHLP, cpu_time_all)}}{Method used in the EM algorithm to compute statistics based on paramaters
+provided by \code{paramRHLP}. It also calculates the average executon time
+of a EM algorithm run.}
+
 \item{\code{EStep(paramRHLP)}}{Method used in the EM algorithm to update statistics based on parameters
 provided by \code{paramRHLP} (prior and posterior probabilities).}
+
+\item{\code{MAP()}}{MAP updates/changes the values of the fields \code{z_ik} and \code{klas}
+      by applying the Maximum A Posteriori Bayes allocation rule.
+
+      \eqn{z\_ik = 1 \     extrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{k} \
+      P(zi = s | Y, W, \beta) = tau\_ik;\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
+      arg max_k P(z_i = k | Y, W, eta) = tau_ik; 0 otherwise}}
 }}
 
 \seealso{

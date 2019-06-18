@@ -1,4 +1,4 @@
-#' Time series representing electrical power consumption during a switch operation
+#' Time series representing the electrical power consumption during a switch operation
 #'
 #' This dataset is based on the French railway switches (or points) which
 #' enable trains to be guided from one track to another at a railway junction.

@@ -17,6 +17,21 @@ been estimated.
 \item{\code{statRHLP}}{A \link{StatRHLP} object. It contains all the statistics associated to the RHLP model.}
 }}
 
+\section{Methods}{
+
+\describe{
+\item{\code{plot(what = c("regressors", "meancurve"))}}{Plot method.
+\describe{
+  \item{\code{what}}{The type of graph requested:
+    \itemize{
+      \item "regressors"
+      \item "meancurve"
+    }
+  }
+}}
+
+\item{\code{summary()}}{Summary method.}
+}}
 
 \seealso{
 \link{ParamRHLP}, \link{StatRHLP}

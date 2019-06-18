@@ -17,7 +17,15 @@ ModelRHLP <- setRefClass(
   methods = list(
 
     plot = function(what = c("regressors", "meancurve")) {
-
+      "Plot method.
+      \\describe{
+        \\item{\\code{what}}{The type of graph requested:
+          \\itemize{
+            \\item \"regressors\"
+            \\item \"meancurve\"
+          }
+        }
+      }"
       oldpar <- par()[c("mfrow", "mai", "mgp")]
       on.exit(par(oldpar), add = TRUE)
 
@@ -65,7 +73,7 @@ ModelRHLP <- setRefClass(
     },
 
     summary = function() {
-
+      "Summary method."
       digits = getOption("digits")
 
       title <- paste("Fitted RHLP model")

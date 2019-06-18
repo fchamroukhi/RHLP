@@ -3,7 +3,7 @@
 #' emRHLP is used to fit a RHLP model. The estimation method is performed by
 #' the Expectation-Maximization algorithm.
 #'
-#' @details emRHLP function is based on the EM algorithm. This functions starts
+#' @details emRHLP function is based on the EM algorithm. This function starts
 #' with an initialization of the parameters done by the method `initParam` of
 #' the class [ParamRHLP][ParamRHLP], then it alternates between a E-Step
 #' (method of the class [StatRHLP][StatRHLP]) and a M-Step (method of the class

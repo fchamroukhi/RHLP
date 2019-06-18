@@ -3,35 +3,37 @@
 #' StatRHLP contains all the parameters of a [RHLP][ParamRHLP] model.
 #'
 #' @field pi_ik Matrix of size \eqn{(m, K)} representing the probabilities
-#' \eqn{P(zi = k; W) = P(z_{ik} = 1; W)}{P(zi = k; W) = P(z_ik = 1; W)} of the
+#' \eqn{P(zi = k; W) = P(z\_ik = 1; W)}{P(zi = k; W) = P(z_ik = 1; W)} of the
 #' latent variable \eqn{zi,\ i = 1,\dots,m}{zi, i = 1,\dots,m}.
 #' @field z_ik Hard segmentation logical matrix of dimension \eqn{(m, K)}
 #' obtained by the Maximum a posteriori (MAP) rule:
-#' \eqn{z_{ik} = 1 \ \textrm{if} \ z_{ik} = \textrm{arg} \ \textrm{max}_{k} \
-#' P(z_i = k | Y, W, \beta) = tau_ik;\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
+#' \eqn{z\_ik = 1 \ \textrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{k} \
+#' P(zi = k | Y, W, \beta) = tau\_ik;\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
 #' arg max_k P(z_i = k | Y, W, \beta) = tau_ik; 0 otherwise}, \eqn{k = 1,\dots,K}.
 #' @field klas Column matrix of the labels issued from `z_ik`. Its elements are
 #' \eqn{klas(i) = k}, \eqn{k = 1,\dots,K}.
 #' @field Ex Column matrix of dimension \emph{m}. `Ex` is the curve expectation
 #' : sum of the polynomial components \eqn{\beta_{k} \times X_{i}}{\betak x X_i}
 #' weighted by the logistic probabilities `pi_ik`:
-#' \eqn{Ey(i) = \sum_{k = 1}^{K} pi_ik \times \beta_{k} \times X_{i}}{Ey(i) =
+#' \eqn{Ey(i) = \sum_{k = 1}^{K} pi\_ik \times \beta_{k} \times X_{i}}{Ey(i) =
 #' \sum_{k=1}^K pi_ik x \betak x X_i}, \eqn{i = 1,\dots,m}.
 #' @field loglik Numeric. Log-likelihood of the RHLP model.
 #' @field com_loglik Numeric. Complete log-likelihood of the RHLP model.
 #' @field stored_loglik List. Stored values of the log-likelihood at each EM
 #' iteration.
+#' @field stored_com_loglik List. Stored values of the Complete log-likelihood
+#' at each EM iteration.
 #' @field BIC Numeric. Value of the BIC (Bayesian Information Criterion)
-#' criterion. The formula is \eqn{BIC = log\_lik - nu \times
-#' \textrm{log}(m) / 2}{BIC = loglik - nu x log(m) / 2} with \emph{nu} the
+#' criterion. The formula is \eqn{BIC = loglik - nu \times
+#' \textrm{log}(m) / 2}{BIC = loglik - nu x log(m) / 2} with `nu` the
 #' degree of freedom of the RHLP model.
 #' @field ICL Numeric. Value of the ICL (Integrated Completed Likelihood)
 #' criterion. The formula is \eqn{ICL = com\_loglik - nu \times
-#' \textrm{log}(m) / 2}{ICL = com_loglik - nu x log(m) / 2} with \emph{nu} the
+#' \textrm{log}(m) / 2}{ICL = com_loglik - nu x log(m) / 2} with `nu` the
 #' degree of freedom of the RHLP model.
 #' @field AIC Numeric. Value of the AIC (Akaike Information Criterion)
-#' criterion. The formula is \eqn{AIC = log\_lik - nu}{AIC = loglik - nu}.
-#' @field cpu_time Numeric. Average executon time of a EM step.
+#' criterion. The formula is \eqn{AIC = loglik - nu}{AIC = loglik - nu}.
+#' @field cpu_time Numeric. Average executon time of a EM algorithm run.
 #' @field log_piik_fik Matrix of size \eqn{(m, K)} giving the values of the
 #' logarithm of the joint probability
 #' \eqn{P(Y_{i}, \ zi = k)}{P(Yi, zi = k)}, \eqn{i = 1,\dots,m}.
@@ -89,30 +91,12 @@ StatRHLP <- setRefClass(
     },
 
     MAP = function() {
-      ###########################################################################
-      # function [klas, Z] = MAP(PostProbs)
-      #
-      # calculate a partition by applying the Maximum A Posteriori Bayes
-      # allocation rule
-      #
-      #
-      # Inputs :
-      #   PostProbs, a matrix of dimensions [n x K] of the posterior
-      #  probabilities of a given sample of n observations arizing from K groups
-      #
-      # Outputs:
-      #   klas: a vector of n class labels (z_1, ...z_n) where z_i =k \in {1,...K}
-      #       klas(i) = arg   max (PostProbs(i,k)) , for all i=1,...,n
-      #                     1<=k<=K
-      #               = arg   max  p(zi=k|xi;theta)
-      #                     1<=k<=K
-      #               = arg   max  p(zi=k;theta)p(xi|zi=k;theta)/sum{l=1}^{K}p(zi=l;theta) p(xi|zi=l;theta)
-      #                     1<=k<=K
-      #
-      #
-      #       Z : Hard partition data matrix [nxK] with binary elements Zik such
-      #       that z_ik =1 iff z_i = k
-      #
+      "MAP updates/changes the values of the fields \\code{z_ik} and \\code{klas}
+      by applying the Maximum A Posteriori Bayes allocation rule.
+
+      \\eqn{z\\_ik = 1 \\ \textrm{if} \\ z\\_ik = \\textrm{arg} \\ \\textrm{max}_{k} \\
+      P(zi = s | Y, W, \\beta) = tau\\_ik;\\ 0 \\ \\textrm{otherwise}}{z_ik = 1 if z_ik =
+      arg max_k P(z_i = k | Y, W, \beta) = tau_ik; 0 otherwise}"
       N <- nrow(pi_ik)
       K <- ncol(pi_ik)
       ikmax <- max.col(pi_ik)
@@ -125,12 +109,16 @@ StatRHLP <- setRefClass(
     },
 
     computeLikelihood = function(reg_irls) {
+      "Method to compute the log-likelihood. \\code{reg_irls} is the value of
+      the regularization part in the IRLS algorithm."
       loglik <<- sum(log_sum_piik_fik) + reg_irls
 
     },
 
     computeStats = function(paramRHLP, cpu_time_all) {
-
+      "Method used in the EM algorithm to compute statistics based on paramaters
+      provided by \\code{paramRHLP}. It also calculates the average executon time
+      of a EM algorithm run."
       polynomials <<- paramRHLP$phi$XBeta %*% paramRHLP$beta
       Ex <<- matrix(rowSums(pi_ik * polynomials))
 
