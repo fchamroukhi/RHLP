@@ -4,9 +4,9 @@
 \alias{emRHLP}
 \title{emRHLP is used to fit a RHLP model.}
 \usage{
-emRHLP(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1,
-  max_iter = 1500, threshold = 1e-06, verbose = FALSE,
-  verbose_IRLS = FALSE)
+emRHLP(X, Y, K, p, q = 1, variance_type = c("heteroskedastic",
+  "homoskedastic"), n_tries = 1, max_iter = 1500, threshold = 1e-06,
+  verbose = FALSE, verbose_IRLS = FALSE)
 }
 \arguments{
 \item{X}{Numeric vector of length \emph{m} representing the covariates.}
@@ -18,13 +18,14 @@ observed at points \eqn{1,\dots,m}.}
 
 \item{p}{The order of the polynomial regression.}
 
-\item{q}{The dimension of the logistic regression. For the purpose of
+\item{q}{Optional. The dimension of the logistic regression. For the purpose of
 segmentation, it must be set to 1.}
 
-\item{variance_type}{Numeric indicating if the model is homoskedastic
-(\code{variance_type} = 1) or heteroskedastic (\code{variance_type} = 2).}
+\item{variance_type}{Optional character indicating if the model is
+"homoskedastic" or "heteroskedastic". By default the model is
+"heteroskedastic".}
 
-\item{n_tries}{Number of times EM algorithm will be launched.
+\item{n_tries}{Optional. Number of times EM algorithm will be launched.
 The solution providing the highest log-likelihood will be returned.
 
 If \code{n_tries} > 1, then for the first pass, parameters are initialized
@@ -32,16 +33,16 @@ by uniformly segmenting the data into K segments, and for the next passes,
 parameters are initialized by randomly segmenting the data into K contiguous
 segments.}
 
-\item{max_iter}{The maximum number of iterations for the EM algorithm.}
+\item{max_iter}{Optional. The maximum number of iterations for the EM algorithm.}
 
-\item{threshold}{A numeric value specifying the threshold for the relative
+\item{threshold}{Optional. A numeric value specifying the threshold for the relative
 difference of log-likelihood between two steps  of the EM as stopping
 criteria.}
 
-\item{verbose}{A logical value indicating whether values of the
+\item{verbose}{Optional. A logical value indicating whether values of the
 log-likelihood should be printed during EM iterations.}
 
-\item{verbose_IRLS}{A logical value indicating whether values of the
+\item{verbose_IRLS}{Optional. A logical value indicating whether values of the
 criterion optimized by IRLS should be printed at each step of the EM
 algorithm.}
 }

@@ -28,7 +28,6 @@ LinkingTo:
 Collate:
     RHLP-package.R
     RcppExports.R
-    enums.R
     utils.R
     FData.R
     ParamRHLP.R

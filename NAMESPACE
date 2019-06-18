@@ -2,7 +2,6 @@
 
 export(emRHLP)
 export(selectRHLP)
-export(variance_types)
 exportClasses(FData)
 exportClasses(ModelRHLP)
 exportClasses(ParamRHLP)

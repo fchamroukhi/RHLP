@@ -28,7 +28,8 @@ been estimated.
       \item "meancurve"
     }
   }
-}}
+}
+By default, all the above graphs are produced.}
 
 \item{\code{summary()}}{Summary method.}
 }}

@@ -25,7 +25,8 @@ ModelRHLP <- setRefClass(
             \\item \"meancurve\"
           }
         }
-      }"
+      }
+      By default, all the above graphs are produced."
       oldpar <- par()[c("mfrow", "mai", "mgp")]
       on.exit(par(oldpar), add = TRUE)
 
@@ -110,10 +111,10 @@ ModelRHLP <- setRefClass(
       colnames(betas) <- sapply(1:paramRHLP$K, function(x) paste0("Beta(K = ", x, ")"))
       print(betas, digits = digits)
 
-      cat(paste0(ifelse(paramRHLP$variance_type == variance_types$homoskedastic, "\n\n",
+      cat(paste0(ifelse(paramRHLP$variance_type == "homoskedastic", "\n\n",
                         "\nVariances:\n\n")))
       sigma2 = data.frame(t(paramRHLP$sigma2), row.names = NULL)
-      if (paramRHLP$variance_type == variance_types$homoskedastic) {
+      if (paramRHLP$variance_type == "homoskedastic") {
         colnames(sigma2) = "Sigma2"
         print(sigma2, digits = digits, row.names = FALSE)
       } else {

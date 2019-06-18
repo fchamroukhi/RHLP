@@ -7,8 +7,8 @@
 #' @field p The order of the polynomial regression.
 #' @field q The dimension of the logistic regression. For the purpose of
 #' segmentation, it must be set to 1.
-#' @field variance_type Numeric indicating if the model is homoskedastic
-#' (`variance_type` = 1) or heteroskedastic (`variance_type` = 2).
+#' @field variance_type Character indicating if the model is homoskedastic
+#' or heteroskedastic.
 #' @field W Parameters of the logistic process.
 #' \eqn{W = (w_{1},\dots,w_{K-1})} is a matrix of dimension
 #' \eqn{(q + 1, K - 1)}, with \emph{q} the order of the logistic regression.
@@ -32,7 +32,7 @@ ParamRHLP <- setRefClass(
     K = "numeric",
     p = "numeric",
     q = "numeric",
-    variance_type = "numeric",
+    variance_type = "character",
     nu = "numeric",
 
     W = "matrix",
@@ -41,7 +41,7 @@ ParamRHLP <- setRefClass(
   ),
   methods = list(
 
-    initialize = function(fData = FData(numeric(1), matrix(1)), K = 1, p = 2, q = 1, variance_type = 1) {
+    initialize = function(fData = FData(numeric(1), matrix(1)), K = 1, p = 2, q = 1, variance_type = "heteroskedastic") {
 
       fData <<- fData
 
@@ -52,19 +52,19 @@ ParamRHLP <- setRefClass(
       q <<- q
       variance_type <<- variance_type
 
-      if (variance_type == variance_types$homoskedastic) {
+      if (variance_type == "homoskedastic") {
         nu <<- (p + q + 3) * K - (q + 1) - (K - 1)
-      } else{
+      } else {
         nu <<- (p + q + 3) * K - (q + 1)
       }
 
       W <<- matrix(0, p + 1, K - 1)
       beta <<- matrix(NA, p + 1, K)
 
-      if (variance_type == variance_types$homoskedastic) {
+      if (variance_type == "homoskedastic") {
         sigma2 <<- matrix(NA)
       }
-      else{
+      else {
         sigma2 <<- matrix(NA, K)
       }
 
@@ -97,14 +97,14 @@ ParamRHLP <- setRefClass(
           bk <-  solve(t(Phi_ij) %*% Phi_ij) %*% t(Phi_ij) %*% yij
           beta[, k] <<- bk
 
-          if (variance_type == variance_types$homoskedastic) {
+          if (variance_type == "homoskedastic") {
             sigma2 <<- matrix(1)
           }
-          else{
+          else {
             sigma2[k] <<- var(yij)
           }
         }
-      } else{# Random segmentation into K contiguous segments, and then a regression
+      } else {# Random segmentation into K contiguous segments, and then a regression
 
         # Initialization of W
         W <<- rand(q + 1, K - 1)
@@ -136,10 +136,10 @@ ParamRHLP <- setRefClass(
           bk <- solve(t(Phi_ij) %*% Phi_ij) %*% t(Phi_ij) %*% yij
           beta[, k] <<- bk
 
-          if (variance_type == variance_types$homoskedastic) {
+          if (variance_type == "homoskedastic") {
             sigma2 <<- var(fData$Y)
           }
-          else{
+          else {
             sigma2[k] <<- 1
           }
         }
@@ -150,7 +150,7 @@ ParamRHLP <- setRefClass(
       "Method used in the EM algorithm to learn the parameters of the RHLP model
       based on statistics provided by \\code{statRHLP}."
       # Maximization w.r.t betak and sigmak (the variances)
-      if (variance_type == variance_types$homoskedastic) {
+      if (variance_type == "homoskedastic") {
         s = 0
       }
       for (k in 1:K) {
@@ -170,7 +170,7 @@ ParamRHLP <- setRefClass(
         # Maximisation w.r.t sigmak (the variances)
         sk <- t(z) %*% z
 
-        if (variance_type == variance_types$homoskedastic) {
+        if (variance_type == "homoskedastic") {
           s <- s + sk
           sigma2 <<- s / fData$m
         } else {

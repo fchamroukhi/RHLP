@@ -69,7 +69,7 @@ StatRHLP <- setRefClass(
   ),
   methods = list(
 
-    initialize = function(paramRHLP = ParamRHLP(fData = FData(numeric(1), matrix(1)), K = 1, p = 2, q = 1, variance_type = 1)) {
+    initialize = function(paramRHLP = ParamRHLP(fData = FData(numeric(1), matrix(1)), K = 1, p = 2, q = 1, variance_type = "heteroskedastic")) {
 
       pi_ik <<- matrix(NA, paramRHLP$fData$m, paramRHLP$K)
       z_ik <<- matrix(NA, paramRHLP$fData$m, paramRHLP$K)
@@ -141,7 +141,7 @@ StatRHLP <- setRefClass(
       for (k in (1:paramRHLP$K)) {
         muk <- paramRHLP$phi$XBeta %*% paramRHLP$beta[, k]
 
-        if (paramRHLP$variance_type == variance_types$homoskedastic) {
+        if (paramRHLP$variance_type == "homoskedastic") {
           sigmak <-  paramRHLP$sigma2[1]
         } else {
           sigmak <- paramRHLP$sigma2[k]
