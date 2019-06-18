@@ -27,6 +27,9 @@ ModelRHLP <- setRefClass(
         }
       }
       By default, all the above graphs are produced."
+
+      what <- match.arg(what, several.ok = TRUE)
+
       oldpar <- par()[c("mfrow", "mai", "mgp")]
       on.exit(par(oldpar), add = TRUE)
 
