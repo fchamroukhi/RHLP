@@ -43,10 +43,10 @@ data("simulatedtimeserie")
 # Set up RHLP model parameters
 
 ```{r}
-K <- 5 # number of regimes (mixture components)
-p <- 3 # dimension of beta (order of the polynomial regressors)
-q <- 1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
-variance_type <- "heteroskedastic"
+K <- 5 # Number of regimes (mixture components)
+p <- 3 # Dimension of beta (order of the polynomial regressors)
+q <- 1 # Dimension of w (order of the logistic regression: to be set to 1 for segmentation)
+variance_type <- "heteroskedastic" # "heteroskedastic" or "homoskedastic" model
 ```
 
 # Set up EM parameters
@@ -62,14 +62,14 @@ verbose_IRLS <- FALSE
 # Estimation
 
 ```{r}
-solution <- emRHLP(simulatedtimeserie$X, t(simulatedtimeserie$Y), K, p, q, 
+rhlp <- emRHLP(simulatedtimeserie$X, t(simulatedtimeserie$Y), K, p, q, 
                    variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 
 # Summary
 
 ```{r}
-solution$summary()
+rhlp$summary()
 ```
 
 # Plots
@@ -77,11 +77,11 @@ solution$summary()
 ## Fitted regressors
 
 ```{r}
-solution$plot(what = "regressors")
+rhlp$plot(what = "regressors")
 ```
 
 ## Mean curve
 
 ```{r}
-solution$plot(what = "meancurve")
+rhlp$plot(what = "meancurve")
 ```
