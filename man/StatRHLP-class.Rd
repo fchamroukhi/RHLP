@@ -6,33 +6,34 @@
 \alias{StatRHLP}
 \title{A Reference Class which contains statistics of a RHLP model.}
 \description{
-StatRHLP contains all the parameters of a \link[=ParamRHLP]{RHLP} model.
+StatRHLP contains all the statistics associated to a \link[=ParamRHLP]{RHLP} model.
 }
 \section{Fields}{
 
 \describe{
-\item{\code{pi_ik}}{Matrix of size \eqn{(m, K)} representing the probabilities
-\eqn{P(zi = k; W) = P(z\_ik = 1; W)}{P(zi = k; W) = P(z_ik = 1; W)} of the
-latent variable \eqn{zi,\ i = 1,\dots,m}{zi, i = 1,\dots,m}.}
+\item{\code{pi_ik}}{Matrix of size \eqn{(m, K)} representing the prior probabilities
+\eqn{\pi_{k}(x_{i}; \boldsymbol{\Psi}) = P(z_{i} = k | \boldsymbol{x}; \Psi)}{\pi_{k}(x_{i}; \Psi) = P(z_{i} = k | x; \Psi)}
+of the latent variable \eqn{z_{i}, i = 1,\dots,m}.}
 
 \item{\code{z_ik}}{Hard segmentation logical matrix of dimension \eqn{(m, K)}
 obtained by the Maximum a posteriori (MAP) rule:
 \eqn{z\_ik = 1 \ \textrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{k} \
-P(zi = k | Y, W, \beta) = tau\_ik;\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
-arg max_k P(z_i = k | Y, W, \beta) = tau_ik; 0 otherwise}, \eqn{k = 1,\dots,K}.}
+\pi_{k}(x_{i}; \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
+arg max_k \pi_{k}(x_{i}; \Psi); 0 otherwise}, \eqn{k = 1,\dots,K}.}
 
 \item{\code{klas}}{Column matrix of the labels issued from \code{z_ik}. Its elements are
 \eqn{klas(i) = k}, \eqn{k = 1,\dots,K}.}
 
 \item{\code{Ex}}{Column matrix of dimension \emph{m}. \code{Ex} is the curve expectation
-: sum of the polynomial components \eqn{\beta_{k} \times X_{i}}{\betak x X_i}
+: sum of the polynomial components \eqn{\boldsymbol{x}_{i} \times \beta_{k}}{x_{i} x \beta_{k}}
 weighted by the logistic probabilities \code{pi_ik}:
-\eqn{Ey(i) = \sum_{k = 1}^{K} pi\_ik \times \beta_{k} \times X_{i}}{Ey(i) =
-\sum_{k=1}^K pi_ik x \betak x X_i}, \eqn{i = 1,\dots,m}.}
+\eqn{Ey(i) = \sum_{k = 1}^{K} pi\_ik \times \boldsymbol{x}_{i} \times \beta_{k}}{Ey(i) =
+\sum_{k=1}^K pi_ik x x_{i} x \betak}, with \eqn{\boldsymbol{x}_{i} = (1,x_{i},\dots,x_{i}^{q})}{x_{i} = (1,x_{i},\dots,x_{i}^{q})},
+\eqn{i = 1,\dots,m}.}
 
-\item{\code{loglik}}{Numeric. Log-likelihood of the RHLP model.}
+\item{\code{loglik}}{Numeric. Observed-data log-likelihood of the RHLP model.}
 
-\item{\code{com_loglik}}{Numeric. Complete log-likelihood of the RHLP model.}
+\item{\code{com_loglik}}{Numeric. Complete-data log-likelihood of the RHLP model.}
 
 \item{\code{stored_loglik}}{List. Stored values of the log-likelihood at each EM
 iteration.}
@@ -40,35 +41,34 @@ iteration.}
 \item{\code{stored_com_loglik}}{List. Stored values of the Complete log-likelihood
 at each EM iteration.}
 
-\item{\code{BIC}}{Numeric. Value of the BIC (Bayesian Information Criterion)
-criterion. The formula is \eqn{BIC = loglik - nu \times
-\textrm{log}(m) / 2}{BIC = loglik - nu x log(m) / 2} with \code{nu} the
-degree of freedom of the RHLP model.}
+\item{\code{BIC}}{Numeric. Value of BIC (Bayesian Information Criterion). The
+formula is \eqn{BIC = loglik - nu \times \textrm{log}(m) / 2}{BIC = loglik - nu x log(m) / 2}
+with \code{nu} the degree of freedom of the RHLP model.}
 
-\item{\code{ICL}}{Numeric. Value of the ICL (Integrated Completed Likelihood)
-criterion. The formula is \eqn{ICL = com\_loglik - nu \times
-\textrm{log}(m) / 2}{ICL = com_loglik - nu x log(m) / 2} with \code{nu} the
-degree of freedom of the RHLP model.}
+\item{\code{ICL}}{Numeric. Value of ICL (Integrated Completed Likelihood).
+The formula is \eqn{ICL = com\_loglik - nu \times \textrm{log}(m) / 2}{ICL = com_loglik - nu x log(m) / 2}
+with \code{nu} the degree of freedom of the RHLP model.}
 
-\item{\code{AIC}}{Numeric. Value of the AIC (Akaike Information Criterion)
-criterion. The formula is \eqn{AIC = loglik - nu}{AIC = loglik - nu}.}
+\item{\code{AIC}}{Numeric. Value of AIC (Akaike Information Criterion).
+The formula is \eqn{AIC = loglik - nu}{AIC = loglik - nu}.}
 
-\item{\code{cpu_time}}{Numeric. Average executon time of a EM algorithm run.}
+\item{\code{cpu_time}}{Numeric. Average computing time of a EM algorithm run.}
 
 \item{\code{log_piik_fik}}{Matrix of size \eqn{(m, K)} giving the values of the
 logarithm of the joint probability
-\eqn{P(Y_{i}, \ zi = k)}{P(Yi, zi = k)}, \eqn{i = 1,\dots,m}.}
+\eqn{P(y_{i}, \ z_{i} = k | \boldsymbol{x}, \boldsymbol{\Psi})}{P(y_{i}, z_{i} = k | x, \Psi)},
+\eqn{i = 1,\dots,m}.}
 
 \item{\code{log_sum_piik_fik}}{Column matrix of size \emph{m} giving the values of
-\eqn{\sum_{k = 1}^{K} \textrm{log} P(Y_{i}, \ zi = k)}{\sum_{k = 1}^{K} log
-P(Yi, zi = k)}, \eqn{i = 1,\dots,m}.}
+\eqn{\textrm{log} \sum_{k = 1}^{K} P(y_{i}, \ z_{i} = k | \boldsymbol{x}, \boldsymbol{\Psi})}{log \sum_{k = 1}^{K} P(y_{i}, z_{i} = k | x, \Psi)},
+\eqn{i = 1,\dots,m}.}
 
 \item{\code{tau_ik}}{Matrix of size \eqn{(m, K)} giving the posterior probability that
-\eqn{Y_{i}}{Yi} originates from the \eqn{k}-th regression model
-\eqn{P(zi = k | Y, W, \beta)}.}
+\eqn{Y_{i}} originates from the \eqn{k}-th regression model
+\eqn{P(z_{i} = k | \boldsymbol{x}, \boldsymbol{y}; \Psi))}{P(z_{i} = k | x, y; \Psi))}.}
 
 \item{\code{polynomials}}{Matrix of size \eqn{(m, K)} giving the values of
-\eqn{\beta_{k} \times X_{i}}{\betak x X_i}, \eqn{i = 1,\dots,m}.}
+\eqn{x_{i} \times \beta_{k}}{x_{i} x \beta_{k}}, \eqn{i = 1,\dots,m}.}
 }}
 
 \section{Methods}{
@@ -78,20 +78,20 @@ P(Yi, zi = k)}, \eqn{i = 1,\dots,m}.}
 the regularization part in the IRLS algorithm.}
 
 \item{\code{computeStats(paramRHLP, cpu_time_all)}}{Method used in the EM algorithm to compute statistics based on paramaters
-provided by \code{paramRHLP}. It also calculates the average executon time
-of a EM algorithm run.}
+provided by \code{paramRHLP}. It also calculates the average computing time
+of a single run of the EM algorithm.}
 
 \item{\code{EStep(paramRHLP)}}{Method used in the EM algorithm to update statistics based on parameters
 provided by \code{paramRHLP} (prior and posterior probabilities).}
 
-\item{\code{MAP()}}{MAP updates/changes the values of the fields \code{z_ik} and \code{klas}
+\item{\code{MAP()}}{MAP calculates values of the fields \code{z_ik} and \code{klas}
       by applying the Maximum A Posteriori Bayes allocation rule.
 
-      \eqn{z\_ik = 1 \     extrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{k} \
-      P(zi = s | Y, W, \beta) = tau\_ik;\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
-      arg max_k P(z_i = k | Y, W, eta) = tau_ik; 0 otherwise}}
+      \eqn{z_{ik} = 1 \     extrm{if} \ k = \textrm{arg} \ \textrm{max}_{s} \
+      \pi_{s}(x_{i}; \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{z_{ik} = 1 if z_ik =
+      arg max_{s} \pi_{k}(x_{i}; \Psi); 0 otherwise}}
 }}
 
 \seealso{
-\link{ParamRHLP}, \link{FData}
+\link{ParamRHLP}
 }

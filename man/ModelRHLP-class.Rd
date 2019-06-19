@@ -6,8 +6,7 @@
 \alias{ModelRHLP}
 \title{A Reference Class which represents a fitted RHLP model.}
 \description{
-ModelRHLP represents a \link[=ModelRHLP]{RHLP} model for which parameters have
-been estimated.
+ModelRHLP represents an estimated \link[=ModelRHLP]{RHLP} model.
 }
 \section{Fields}{
 

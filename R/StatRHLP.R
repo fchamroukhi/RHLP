@@ -1,51 +1,51 @@
 #' A Reference Class which contains statistics of a RHLP model.
 #'
-#' StatRHLP contains all the parameters of a [RHLP][ParamRHLP] model.
+#' StatRHLP contains all the statistics associated to a [RHLP][ParamRHLP] model.
 #'
-#' @field pi_ik Matrix of size \eqn{(m, K)} representing the probabilities
-#' \eqn{P(zi = k; W) = P(z\_ik = 1; W)}{P(zi = k; W) = P(z_ik = 1; W)} of the
-#' latent variable \eqn{zi,\ i = 1,\dots,m}{zi, i = 1,\dots,m}.
+#' @field pi_ik Matrix of size \eqn{(m, K)} representing the prior probabilities
+#' \eqn{\pi_{k}(x_{i}; \boldsymbol{\Psi}) = P(z_{i} = k | \boldsymbol{x}; \Psi)}{\pi_{k}(x_{i}; \Psi) = P(z_{i} = k | x; \Psi)}
+#' of the latent variable \eqn{z_{i}, i = 1,\dots,m}.
 #' @field z_ik Hard segmentation logical matrix of dimension \eqn{(m, K)}
 #' obtained by the Maximum a posteriori (MAP) rule:
 #' \eqn{z\_ik = 1 \ \textrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{k} \
-#' P(zi = k | Y, W, \beta) = tau\_ik;\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
-#' arg max_k P(z_i = k | Y, W, \beta) = tau_ik; 0 otherwise}, \eqn{k = 1,\dots,K}.
+#' \pi_{k}(x_{i}; \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
+#' arg max_k \pi_{k}(x_{i}; \Psi); 0 otherwise}, \eqn{k = 1,\dots,K}.
 #' @field klas Column matrix of the labels issued from `z_ik`. Its elements are
 #' \eqn{klas(i) = k}, \eqn{k = 1,\dots,K}.
 #' @field Ex Column matrix of dimension \emph{m}. `Ex` is the curve expectation
-#' : sum of the polynomial components \eqn{\beta_{k} \times X_{i}}{\betak x X_i}
+#' : sum of the polynomial components \eqn{\boldsymbol{x}_{i} \times \beta_{k}}{x_{i} x \beta_{k}}
 #' weighted by the logistic probabilities `pi_ik`:
-#' \eqn{Ey(i) = \sum_{k = 1}^{K} pi\_ik \times \beta_{k} \times X_{i}}{Ey(i) =
-#' \sum_{k=1}^K pi_ik x \betak x X_i}, \eqn{i = 1,\dots,m}.
-#' @field loglik Numeric. Log-likelihood of the RHLP model.
-#' @field com_loglik Numeric. Complete log-likelihood of the RHLP model.
+#' \eqn{Ey(i) = \sum_{k = 1}^{K} pi\_ik \times \boldsymbol{x}_{i} \times \beta_{k}}{Ey(i) =
+#' \sum_{k=1}^K pi_ik x x_{i} x \betak}, with \eqn{\boldsymbol{x}_{i} = (1,x_{i},\dots,x_{i}^{q})}{x_{i} = (1,x_{i},\dots,x_{i}^{q})},
+#' \eqn{i = 1,\dots,m}.
+#' @field loglik Numeric. Observed-data log-likelihood of the RHLP model.
+#' @field com_loglik Numeric. Complete-data log-likelihood of the RHLP model.
 #' @field stored_loglik List. Stored values of the log-likelihood at each EM
 #' iteration.
 #' @field stored_com_loglik List. Stored values of the Complete log-likelihood
 #' at each EM iteration.
-#' @field BIC Numeric. Value of the BIC (Bayesian Information Criterion)
-#' criterion. The formula is \eqn{BIC = loglik - nu \times
-#' \textrm{log}(m) / 2}{BIC = loglik - nu x log(m) / 2} with `nu` the
-#' degree of freedom of the RHLP model.
-#' @field ICL Numeric. Value of the ICL (Integrated Completed Likelihood)
-#' criterion. The formula is \eqn{ICL = com\_loglik - nu \times
-#' \textrm{log}(m) / 2}{ICL = com_loglik - nu x log(m) / 2} with `nu` the
-#' degree of freedom of the RHLP model.
-#' @field AIC Numeric. Value of the AIC (Akaike Information Criterion)
-#' criterion. The formula is \eqn{AIC = loglik - nu}{AIC = loglik - nu}.
-#' @field cpu_time Numeric. Average executon time of a EM algorithm run.
+#' @field BIC Numeric. Value of BIC (Bayesian Information Criterion). The
+#' formula is \eqn{BIC = loglik - nu \times \textrm{log}(m) / 2}{BIC = loglik - nu x log(m) / 2}
+#' with `nu` the degree of freedom of the RHLP model.
+#' @field ICL Numeric. Value of ICL (Integrated Completed Likelihood).
+#' The formula is \eqn{ICL = com\_loglik - nu \times \textrm{log}(m) / 2}{ICL = com_loglik - nu x log(m) / 2}
+#' with `nu` the degree of freedom of the RHLP model.
+#' @field AIC Numeric. Value of AIC (Akaike Information Criterion).
+#' The formula is \eqn{AIC = loglik - nu}{AIC = loglik - nu}.
+#' @field cpu_time Numeric. Average computing time of a EM algorithm run.
 #' @field log_piik_fik Matrix of size \eqn{(m, K)} giving the values of the
 #' logarithm of the joint probability
-#' \eqn{P(Y_{i}, \ zi = k)}{P(Yi, zi = k)}, \eqn{i = 1,\dots,m}.
+#' \eqn{P(y_{i}, \ z_{i} = k | \boldsymbol{x}, \boldsymbol{\Psi})}{P(y_{i}, z_{i} = k | x, \Psi)},
+#' \eqn{i = 1,\dots,m}.
 #' @field log_sum_piik_fik Column matrix of size \emph{m} giving the values of
-#' \eqn{\sum_{k = 1}^{K} \textrm{log} P(Y_{i}, \ zi = k)}{\sum_{k = 1}^{K} log
-#' P(Yi, zi = k)}, \eqn{i = 1,\dots,m}.
+#' \eqn{\textrm{log} \sum_{k = 1}^{K} P(y_{i}, \ z_{i} = k | \boldsymbol{x}, \boldsymbol{\Psi})}{log \sum_{k = 1}^{K} P(y_{i}, z_{i} = k | x, \Psi)},
+#' \eqn{i = 1,\dots,m}.
 #' @field tau_ik Matrix of size \eqn{(m, K)} giving the posterior probability that
-#' \eqn{Y_{i}}{Yi} originates from the \eqn{k}-th regression model
-#' \eqn{P(zi = k | Y, W, \beta)}.
+#' \eqn{Y_{i}} originates from the \eqn{k}-th regression model
+#' \eqn{P(z_{i} = k | \boldsymbol{x}, \boldsymbol{y}; \Psi))}{P(z_{i} = k | x, y; \Psi))}.
 #' @field polynomials Matrix of size \eqn{(m, K)} giving the values of
-#' \eqn{\beta_{k} \times X_{i}}{\betak x X_i}, \eqn{i = 1,\dots,m}.
-#' @seealso [ParamRHLP], [FData]
+#' \eqn{x_{i} \times \beta_{k}}{x_{i} x \beta_{k}}, \eqn{i = 1,\dots,m}.
+#' @seealso [ParamRHLP]
 #' @export
 StatRHLP <- setRefClass(
   "StatRHLP",
@@ -69,12 +69,12 @@ StatRHLP <- setRefClass(
   ),
   methods = list(
 
-    initialize = function(paramRHLP = ParamRHLP(fData = FData(numeric(1), matrix(1)), K = 1, p = 2, q = 1, variance_type = "heteroskedastic")) {
+    initialize = function(paramRHLP = ParamRHLP()) {
 
-      pi_ik <<- matrix(NA, paramRHLP$fData$m, paramRHLP$K)
-      z_ik <<- matrix(NA, paramRHLP$fData$m, paramRHLP$K)
-      klas <<- matrix(NA, paramRHLP$fData$m, 1)
-      Ex <<- matrix(NA, paramRHLP$fData$m, 1)
+      pi_ik <<- matrix(NA, paramRHLP$m, paramRHLP$K)
+      z_ik <<- matrix(NA, paramRHLP$m, paramRHLP$K)
+      klas <<- matrix(NA, paramRHLP$m, 1)
+      Ex <<- matrix(NA, paramRHLP$m, 1)
       loglik <<- -Inf
       com_loglik <<- -Inf
       stored_loglik <<- list()
@@ -83,20 +83,20 @@ StatRHLP <- setRefClass(
       ICL <<- -Inf
       AIC <<- -Inf
       cpu_time <<- Inf
-      log_piik_fik <<- matrix(0, paramRHLP$fData$m, paramRHLP$K)
-      log_sum_piik_fik <<- matrix(NA, paramRHLP$fData$m, 1)
-      tau_ik <<- matrix(0, paramRHLP$fData$m, paramRHLP$K)
-      polynomials <<- matrix(NA, paramRHLP$fData$m, paramRHLP$K)
+      log_piik_fik <<- matrix(0, paramRHLP$m, paramRHLP$K)
+      log_sum_piik_fik <<- matrix(NA, paramRHLP$m, 1)
+      tau_ik <<- matrix(0, paramRHLP$m, paramRHLP$K)
+      polynomials <<- matrix(NA, paramRHLP$m, paramRHLP$K)
 
     },
 
     MAP = function() {
-      "MAP updates/changes the values of the fields \\code{z_ik} and \\code{klas}
+      "MAP calculates values of the fields \\code{z_ik} and \\code{klas}
       by applying the Maximum A Posteriori Bayes allocation rule.
 
-      \\eqn{z\\_ik = 1 \\ \textrm{if} \\ z\\_ik = \\textrm{arg} \\ \\textrm{max}_{k} \\
-      P(zi = s | Y, W, \\beta) = tau\\_ik;\\ 0 \\ \\textrm{otherwise}}{z_ik = 1 if z_ik =
-      arg max_k P(z_i = k | Y, W, \beta) = tau_ik; 0 otherwise}"
+      \\eqn{z_{ik} = 1 \\ \textrm{if} \\ k = \\textrm{arg} \\ \\textrm{max}_{s} \\
+      \\pi_{s}(x_{i}; \\boldsymbol{\\Psi});\\ 0 \\ \\textrm{otherwise}}{z_{ik} = 1 if z_ik =
+      arg max_{s} \\pi_{k}(x_{i}; \\Psi); 0 otherwise}"
       N <- nrow(pi_ik)
       K <- ncol(pi_ik)
       ikmax <- max.col(pi_ik)
@@ -117,26 +117,26 @@ StatRHLP <- setRefClass(
 
     computeStats = function(paramRHLP, cpu_time_all) {
       "Method used in the EM algorithm to compute statistics based on paramaters
-      provided by \\code{paramRHLP}. It also calculates the average executon time
-      of a EM algorithm run."
+      provided by \\code{paramRHLP}. It also calculates the average computing time
+      of a single run of the EM algorithm."
       polynomials <<- paramRHLP$phi$XBeta %*% paramRHLP$beta
       Ex <<- matrix(rowSums(pi_ik * polynomials))
 
       cpu_time <<- mean(cpu_time_all)
 
-      BIC <<- loglik - (paramRHLP$nu * log(paramRHLP$fData$m) / 2)
+      BIC <<- loglik - (paramRHLP$nu * log(paramRHLP$m) / 2)
       AIC <<- loglik - paramRHLP$nu
 
       zik_log_alphag_fg_xij <- (z_ik) * (log_piik_fik)
       com_loglik <<- sum(rowSums(zik_log_alphag_fg_xij))
-      ICL <<- com_loglik - paramRHLP$nu * log(paramRHLP$fData$m) / 2
+      ICL <<- com_loglik - paramRHLP$nu * log(paramRHLP$m) / 2
 
     },
 
     EStep = function(paramRHLP) {
       "Method used in the EM algorithm to update statistics based on parameters
       provided by \\code{paramRHLP} (prior and posterior probabilities)."
-      pi_ik <<- multinomialLogit(paramRHLP$W, paramRHLP$phi$Xw, ones(paramRHLP$fData$m, paramRHLP$K), ones(paramRHLP$fData$m, 1))$piik
+      pi_ik <<- multinomialLogit(paramRHLP$W, paramRHLP$phi$Xw, ones(paramRHLP$m, paramRHLP$K), ones(paramRHLP$m, 1))$piik
 
       for (k in (1:paramRHLP$K)) {
         muk <- paramRHLP$phi$XBeta %*% paramRHLP$beta[, k]
@@ -146,9 +146,9 @@ StatRHLP <- setRefClass(
         } else {
           sigmak <- paramRHLP$sigma2[k]
         }
-        z <- ((paramRHLP$fData$Y - muk) ^ 2) / sigmak
+        z <- ((paramRHLP$Y - muk) ^ 2) / sigmak
         log_piik_fik[, k] <<-
-          log(pi_ik[, k]) - (0.5 * ones(paramRHLP$fData$m, 1) * (log(2 * pi) + log(sigmak))) - (0.5 * z)
+          log(pi_ik[, k]) - (0.5 * ones(paramRHLP$m, 1) * (log(2 * pi) + log(sigmak))) - (0.5 * z)
       }
 
       log_piik_fik <<- pmax(log_piik_fik, log(.Machine$double.xmin))

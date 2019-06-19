@@ -31,13 +31,13 @@ library(RHLP)
 
 # Introduction
 
-**RHLP** is a contributed R package for segmentation. It provides functions for parameter estimation via the EM algorithm. This document gives a quick tour of **RHLP** (version `r packageVersion("RHLP")`) functionalities. It was written in R Markdown, using the [knitr](https://cran.r-project.org/package=knitr) package for production. 
+**RHLP** is a R package for segmentation. It provides functions for parameter estimation via the EM algorithm. This document gives a quick tour of **RHLP** (version `r packageVersion("RHLP")`) functionalities. It was written in R Markdown, using the [knitr](https://cran.r-project.org/package=knitr) package for production. 
 See `help(package="RHLP")` for further details and references provided by `citation("RHLP")`.
 
 # Load data
 
 ```{r}
-data("simulatedtimeserie")
+data("toydataset")
 ```
 
 # Set up RHLP model parameters
@@ -62,7 +62,7 @@ verbose_IRLS <- FALSE
 # Estimation
 
 ```{r}
-rhlp <- emRHLP(simulatedtimeserie$X, t(simulatedtimeserie$Y), K, p, q, 
+rhlp <- emRHLP(toydataset$x, toydataset$y, K, p, q, 
                    variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 

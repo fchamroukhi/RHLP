@@ -11,9 +11,15 @@ ParamRHLP contains all the parameters of a RHLP model.
 \section{Fields}{
 
 \describe{
-\item{\code{fData}}{\link{FData} object representing the sample.}
+\item{\code{X}}{Numeric vector of length \emph{m} representing the covariates/inputs
+\eqn{x_{1},\dots,x_{m}}.}
 
-\item{\code{K}}{The number of regimes (mixture components).}
+\item{\code{Y}}{Numeric vector of length \emph{m} representing the observed
+response/output \eqn{y_{1},\dots,y_{m}}.}
+
+\item{\code{m}}{Numeric. Length of the response/output vector \code{Y}.}
+
+\item{\code{K}}{The number of regimes (RHLP components).}
 
 \item{\code{p}}{The order of the polynomial regression.}
 
@@ -21,24 +27,31 @@ ParamRHLP contains all the parameters of a RHLP model.
 segmentation, it must be set to 1.}
 
 \item{\code{variance_type}}{Character indicating if the model is homoskedastic
-or heteroskedastic.}
+(\code{variance_type = "homoskedastic"}) or heteroskedastic
+(\code{variance_type = "heteroskedastic"}). By default the model is
+heteroskedastic.}
 
 \item{\code{W}}{Parameters of the logistic process.
-\eqn{W = (w_{1},\dots,w_{K-1})} is a matrix of dimension
-\eqn{(q + 1, K - 1)}, with \emph{q} the order of the logistic regression.}
+\eqn{\boldsymbol{W} = (\boldsymbol{w}_{1},\dots,\boldsymbol{w}_{K-1})}{W = (w_{1},\dots,w_{K-1})}
+is a matrix of dimension \eqn{(q + 1, K - 1)}, with \code{q} the order of
+the logistic regression. \code{q} is fixed to 1 by default.}
 
 \item{\code{beta}}{Parameters of the polynomial regressions.
-\eqn{\beta = (\beta_{1},\dots,\beta_{K})} is a matrix of dimension
-\eqn{(p + 1, K)}, with \emph{p} the order of the polynomial regression.}
+\eqn{\boldsymbol{\beta} = (\boldsymbol{\beta}_{1},\dots,\boldsymbol{\beta}_{K})}{\beta = (\beta_{1},\dots,\beta_{K})}
+is a matrix of dimension \eqn{(p + 1, K)}, with \code{p} the order of the
+polynomial regression. \code{p} is fixed to 3 by default.}
 
-\item{\code{sigma2}}{The variances for the \emph{K} regimes. If RHLP model is
-homoskedastic (\code{variance_type} = 1) then sigma2 is a matrix of size
-\eqn{(1, 1)}, else if RHLP model is heteroskedastic (\code{variance_type} = 2)
-then sigma2 is a matrix of size \eqn{(K, 1)}.}
+\item{\code{sigma2}}{The variances for the \code{K} regimes. If RHLP model is
+heteroskedastic (\code{variance_type = "heteroskedastic"}) then \code{sigma2} is a
+matrix of size \eqn{(K, 1)} (otherwise RHLP model is homoskedastic
+(\code{variance_type = "homoskedastic"}) and \code{sigma2} is a matrix
+of size \eqn{(1, 1)}).}
 
-\item{\code{nu}}{The degree of freedom of the RHLP model.}
+\item{\code{nu}}{The degree of freedom of the RHLP model representing the
+complexity of the model.}
 
-\item{\code{phi}}{A list giving the matrices for the polynomial and the logistic regressions.}
+\item{\code{phi}}{A list giving the regression design matrices for the polynomial
+and the logistic regressions.}
 }}
 
 \section{Methods}{
@@ -48,14 +61,13 @@ then sigma2 is a matrix of size \eqn{(K, 1)}.}
       \code{sigma2}.
 
       If try_algo = 1 then \code{W}, \code{beta} and \code{sigma2} are
-      initialized by segmenting uniformly into \code{K} contiguous segments
-      the response Y. Otherwise, \code{W}, \code{beta} and \code{sigma2} are
-      initialized by segmenting randomly the response Y into \code{K} segments.}
+      initialized by segmenting  the time series \code{Y} uniformly into
+      \code{K} contiguous segments. Otherwise, \code{W}, \code{beta} and
+      \code{sigma2} are initialized by segmenting randomly the time series
+      \code{Y} into \code{K} segments.}
 
-\item{\code{MStep(statRHLP, verbose_IRLS)}}{Method used in the EM algorithm to learn the parameters of the RHLP model
-based on statistics provided by \code{statRHLP}.}
+\item{\code{MStep(statRHLP, verbose_IRLS)}}{Method which implements the M-step of the EM algorithm to learn the
+parameters of the RHLP model based on statistics provided by
+\code{statRHLP} (which contains the E-step).}
 }}
 
-\seealso{
-\link{FData}
-}

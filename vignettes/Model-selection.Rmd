@@ -1,8 +1,8 @@
 ---
-title: "Selection-models-with-RHLP"
+title: "Model-selection"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Selection-models-with-RHLP}
+  %\VignetteIndexEntry{Model-selection}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -31,31 +31,34 @@ library(RHLP)
 
 # Introduction
 
-In this package, it is possible to select models using some criteria such as **BIC** 
-and **AIC**.
+In this package, it is possible to select models based on criteria such as 
+**BIC** and **AIC**.
 
 The selection is done on two parameters which are:
 
- * **K**: The number of regimes;
- * **p**: The order of the polyniomial regression.
+ * $K$: The number of regimes;
+ * $p$: The order of the polyniomial regression.
 
 # Data
 
-Let's select a  RHLP model for the following serie Y which is a simulated time serie:
+Let's select a RHLP model for the following time series $Y$:
 
 ```{r}
-data("simulatedtimeserie")
-plot(simulatedtimeserie$X, simulatedtimeserie$Y, type = "l", xlab = "x", ylab = "Y")
+data("toydataset")
+x <- toydataset$x
+y <- toydataset$y
+plot(x, y, type = "l", xlab = "x", ylab = "Y")
 ```
 
-# Model selection based on BIC
+# Model selection with BIC
 
 ```{r}
-selectedrhlp <- selectRHLP(X = simulatedtimeserie$X, t(simulatedtimeserie$Y), Kmin = 2, Kmax = 6, pmin = 0, pmax = 3)
+selectedrhlp <- selectRHLP(X = x, Y = y, Kmin = 2, Kmax = 6, pmin = 0, pmax = 3)
 ```
 
-The selected model has $K = 5$ regimes and the order of the polynomial regression is
-$p = 0$. According to the way Y has been generated, these parameters are what we expexted.
+The selected model has $K = 5$ regimes and the order of the polynomial 
+regression is $p = 0$. According to the way $Y$ has been generated, these 
+parameters are what we expected.
 
 Let's summarize the selected model:
 

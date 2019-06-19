@@ -5,13 +5,14 @@ Version: 0.1.0
 Authors@R: c(person("Faicel", "Chamroukhi", role = c("aut"),
     email = "faicel.chamroukhi@unicaen.fr",
     comment = c(ORCID = "0000-0002-5894-3103")),
-    person("Marius", "Bartcus", role = c("aut")),
+    person("Marius", "Bartcus", role = c("aut"), 
+    email = "marius.bartcus@gmail.com"),
     person("Florian", "Lecocq", role = c("aut", "cre"),
     email = "florian.lecocq@outlook.com"))
 Description: Flexible and user-friendly probabilistic segmentation of time series with 
     smooth and/or abrupt regime changes by a mixture model-based regression approach with 
     a hidden logistic process, fitted by the EM algorithm. See also the packages 'PWR', 
-    'HMMR' and 'MRHLP'.
+    'HMMR', and 'MRHLP'.
 License: GPL (>= 3)
 Depends: 
     R (>= 2.10)
@@ -29,14 +30,13 @@ Collate:
     RHLP-package.R
     RcppExports.R
     utils.R
-    FData.R
     ParamRHLP.R
     StatRHLP.R
     ModelRHLP.R
     ModelLearner.R
     ModelSelection.R
-    data-electricalpower.R
-    data-simulatedtimeserie.R
+    data-realdataset.R
+    data-toydataset.R
 VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true

@@ -2,39 +2,40 @@
 % Please edit documentation in R/ModelSelection.R
 \name{selectRHLP}
 \alias{selectRHLP}
-\title{selectRHLP is used to select a RHLP model based on criteria such as BIC or AIC.}
+\title{selectRHLP implements the model selection procedure.}
 \usage{
 selectRHLP(X, Y, Kmin = 1, Kmax = 10, pmin = 0, pmax = 4,
   criterion = c("BIC", "AIC"))
 }
 \arguments{
-\item{X}{Numeric vector of length \emph{m} representing the covariates.}
+\item{X}{Numeric vector of length \emph{m} representing the covariates/inputs
+\eqn{x_{1},\dots,x_{m}}.}
 
-\item{Y}{Matrix of size \eqn{(n, m)} representing \emph{n} functions of \code{X}
-observed at points \eqn{1,\dots,m}.}
+\item{Y}{Numeric vector of length \emph{m} representing the observed
+response/output \eqn{y_{1},\dots,y_{m}}.}
 
-\item{Kmin}{The minimum number of regimes (mixture components).}
+\item{Kmin}{The minimum number of regimes (RHLP components).}
 
-\item{Kmax}{The maximum number of regimes (mixture components).}
+\item{Kmax}{The maximum number of regimes (RHLP components).}
 
 \item{pmin}{The minimum order of the polynomial regression.}
 
 \item{pmax}{The maximum order of the polynomial regression.}
 
-\item{criterion}{The criterion used to select the "best" RHLP model.}
+\item{criterion}{The criterion used to select the RHLP model ("BIC", "AIC").}
 }
 \value{
 selectRHLP returns an object of class \link{ModelRHLP}
-representing the "best" RHLP model according to the selected \code{criterion}.
+representing the selected RHLP model according to the chosen \code{criterion}.
 }
 \description{
-selectRHLP is used to select a RHLP model based on criteria such as BIC or AIC.
+selectRHLP implements the model selection procedure.
 }
 \details{
-selectRHLP is used to select the "best" RHLP model according to some
-criteria such as BIC or AIC. This function runs every RHLP model by varying
-the number of regimes \code{K} from \code{Kmin} to \code{Kmax} and the order of the
-polynomial regression \code{p} from \code{pmin} to \code{pmax}.
+selectRHLP implements the model selection. This function runs every
+RHLP model by varying the number of regimes \code{K} from \code{Kmin} to \code{Kmax} and
+the order of the polynomial regression \code{p} from \code{pmin} to \code{pmax}. The model
+having the highest value of the chosen selection criterion is then selected.
 }
 \seealso{
 \link{ModelRHLP}

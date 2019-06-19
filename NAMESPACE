@@ -2,7 +2,6 @@
 
 export(emRHLP)
 export(selectRHLP)
-exportClasses(FData)
 exportClasses(ModelRHLP)
 exportClasses(ParamRHLP)
 exportClasses(StatRHLP)
