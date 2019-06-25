@@ -80,8 +80,8 @@ rhlp$summary()
 rhlp$plot(what = "regressors")
 ```
 
-## Mean curve
+## Estimated signal
 
 ```{r}
-rhlp$plot(what = "meancurve")
+rhlp$plot(what = "estimatedsignal")
 ```

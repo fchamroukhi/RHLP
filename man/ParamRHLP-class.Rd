@@ -27,28 +27,27 @@ response/output \eqn{y_{1},\dots,y_{m}}.}
 segmentation, it must be set to 1.}
 
 \item{\code{variance_type}}{Character indicating if the model is homoskedastic
-(\code{variance_type = "homoskedastic"}) or heteroskedastic
-(\code{variance_type = "heteroskedastic"}). By default the model is
-heteroskedastic.}
+(\code{variance_type = "homoskedastic"}) or heteroskedastic (\code{variance_type = "heteroskedastic"}). By default the model is heteroskedastic.}
 
-\item{\code{W}}{Parameters of the logistic process.
-\eqn{\boldsymbol{W} = (\boldsymbol{w}_{1},\dots,\boldsymbol{w}_{K-1})}{W = (w_{1},\dots,w_{K-1})}
-is a matrix of dimension \eqn{(q + 1, K - 1)}, with \code{q} the order of
-the logistic regression. \code{q} is fixed to 1 by default.}
+\item{\code{W}}{Parameters of the logistic process. \eqn{\boldsymbol{W} =
+  (\boldsymbol{w}_{1},\dots,\boldsymbol{w}_{K-1})}{W = (w_{1},\dots,w_{K-1})}
+is a matrix of dimension \eqn{(q + 1, K - 1)}, with \code{q} the order of the
+logistic regression. \code{q} is fixed to 1 by default.}
 
-\item{\code{beta}}{Parameters of the polynomial regressions.
-\eqn{\boldsymbol{\beta} = (\boldsymbol{\beta}_{1},\dots,\boldsymbol{\beta}_{K})}{\beta = (\beta_{1},\dots,\beta_{K})}
-is a matrix of dimension \eqn{(p + 1, K)}, with \code{p} the order of the
-polynomial regression. \code{p} is fixed to 3 by default.}
+\item{\code{beta}}{Parameters of the polynomial regressions. \eqn{\boldsymbol{\beta}
+  = (\boldsymbol{\beta}_{1},\dots,\boldsymbol{\beta}_{K})}{\beta =
+  (\beta_{1},\dots,\beta_{K})} is a matrix of dimension \eqn{(p + 1, K)},
+with \code{p} the order of the polynomial regression. \code{p} is fixed to 3 by
+default.}
 
 \item{\code{sigma2}}{The variances for the \code{K} regimes. If RHLP model is
 heteroskedastic (\code{variance_type = "heteroskedastic"}) then \code{sigma2} is a
 matrix of size \eqn{(K, 1)} (otherwise RHLP model is homoskedastic
-(\code{variance_type = "homoskedastic"}) and \code{sigma2} is a matrix
-of size \eqn{(1, 1)}).}
+(\code{variance_type = "homoskedastic"}) and \code{sigma2} is a matrix of size
+\eqn{(1, 1)}).}
 
-\item{\code{nu}}{The degree of freedom of the RHLP model representing the
-complexity of the model.}
+\item{\code{nu}}{The degree of freedom of the RHLP model representing the complexity
+of the model.}
 
 \item{\code{phi}}{A list giving the regression design matrices for the polynomial
 and the logistic regressions.}

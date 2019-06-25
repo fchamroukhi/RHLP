@@ -1,9 +1,11 @@
 #' A Reference Class which represents a fitted RHLP model.
 #'
-#' ModelRHLP represents an estimated [RHLP][ModelRHLP] model.
+#' ModelRHLP represents an estimated RHLP model.
 #'
-#' @field paramRHLP A [ParamRHLP][ParamRHLP] object. It contains the estimated values of the parameters.
-#' @field statRHLP A [StatRHLP][StatRHLP] object. It contains all the statistics associated to the RHLP model.
+#' @field paramRHLP A [ParamRHLP][ParamRHLP] object. It contains the estimated
+#'   values of the parameters.
+#' @field statRHLP A [StatRHLP][StatRHLP] object. It contains all the
+#'   statistics associated to the RHLP model.
 #' @seealso [ParamRHLP], [StatRHLP]
 #' @export
 ModelRHLP <- setRefClass(
@@ -14,13 +16,14 @@ ModelRHLP <- setRefClass(
   ),
   methods = list(
 
-    plot = function(what = c("regressors", "meancurve")) {
+    plot = function(what = c("regressors", "estimatedsignal")) {
       "Plot method.
       \\describe{
         \\item{\\code{what}}{The type of graph requested:
           \\itemize{
-            \\item \"regressors\"
-            \\item \"meancurve\"
+            \\item \\code{\"regressors\" = } Polynomial regression components.
+            \\item \\code{\"estimatedsignal\" = } Estimated signal (Sum of the
+            polynomial components weighted by the logistic probabilities.
           }
         }
       }
@@ -55,7 +58,7 @@ ModelRHLP <- setRefClass(
         }
       }
 
-      if (any(what == "meancurve")) {
+      if (any(what == "estimatedsignal")) {
         # Data, regression model, and segmentation
         par(mfrow = c(2, 1), mai = c(0.6, 1, 0.5, 0.5), mgp = c(2, 1, 0))
         plot.default(paramRHLP$X, paramRHLP$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y")

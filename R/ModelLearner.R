@@ -1,44 +1,45 @@
 #' emRHLP is used to fit a RHLP model.
 #'
-#' emRHLP is used to fit a RHLP model. The estimation method is performed by
-#' the Expectation-Maximization algorithm.
+#' emRHLP is used to fit a RHLP model. The estimation method is performed by the
+#' Expectation-Maximization algorithm.
 #'
 #' @details emRHLP function implements the EM algorithm. This function starts
-#' with an initialization of the parameters done by the method `initParam` of
-#' the class [ParamRHLP][ParamRHLP], then it alternates between the E-Step
-#' (method of the class [StatRHLP][StatRHLP]) and the M-Step (method of the
-#' class [ParamRHLP][ParamRHLP]) until convergence (until the relative
-#' variation of log-likelihood between two steps of the EM algorithm is less
-#' than the `threshold` parameter).
+#'   with an initialization of the parameters done by the method `initParam` of
+#'   the class [ParamRHLP][ParamRHLP], then it alternates between the E-Step
+#'   (method of the class [StatRHLP][StatRHLP]) and the M-Step (method of the
+#'   class [ParamRHLP][ParamRHLP]) until convergence (until the relative
+#'   variation of log-likelihood between two steps of the EM algorithm is less
+#'   than the `threshold` parameter).
 #'
 #' @param X Numeric vector of length \emph{m} representing the covariates/inputs
-#' \eqn{x_{1},\dots,x_{m}}.
+#'   \eqn{x_{1},\dots,x_{m}}.
 #' @param Y Numeric vector of length \emph{m} representing the observed
-#' response/output \eqn{y_{1},\dots,y_{m}}.
+#'   response/output \eqn{y_{1},\dots,y_{m}}.
 #' @param K The number of regimes (RHLP components).
-#' @param p Optional. The order of the polynomial regression. By default, `p`
-#' is set at 3.
-#' @param q Optional. The dimension of the logistic regression. For the purpose of
-#' segmentation, it must be set to 1 (which is the default value).
+#' @param p Optional. The order of the polynomial regression. By default, `p` is
+#'   set at 3.
+#' @param q Optional. The dimension of the logistic regression. For the purpose
+#'   of segmentation, it must be set to 1 (which is the default value).
 #' @param variance_type Optional character indicating if the model is
-#' "homoskedastic" or "heteroskedastic". By default the model is
-#' "heteroskedastic".
-#' @param n_tries Optional. Number of runs of the EM algorithm.
-#' The solution providing the highest log-likelihood will be returned.
+#'   "homoskedastic" or "heteroskedastic". By default the model is
+#'   "heteroskedastic".
+#' @param n_tries Optional. Number of runs of the EM algorithm. The solution
+#'   providing the highest log-likelihood will be returned.
 #'
-#' If `n_tries` > 1, then for the first run, parameters are initialized
-#' by uniformly segmenting the data into K segments, and for the next runs,
-#' parameters are initialized by randomly segmenting the data into K contiguous
-#'  segments.
-#' @param max_iter Optional. The maximum number of iterations for the EM algorithm.
-#' @param threshold Optional. A numeric value specifying the threshold for the relative
-#'  difference of log-likelihood between two steps  of the EM as stopping
-#'  criteria.
-#' @param verbose Optional. A logical value indicating whether or not values
-#' of the log-likelihood should be printed during EM iterations.
+#'   If `n_tries` > 1, then for the first run, parameters are initialized by
+#'   uniformly segmenting the data into K segments, and for the next runs,
+#'   parameters are initialized by randomly segmenting the data into K
+#'   contiguous segments.
+#' @param max_iter Optional. The maximum number of iterations for the EM
+#'   algorithm.
+#' @param threshold Optional. A numeric value specifying the threshold for the
+#'   relative difference of log-likelihood between two steps of the EM as
+#'   stopping criteria.
+#' @param verbose Optional. A logical value indicating whether or not values of
+#'   the log-likelihood should be printed during EM iterations.
 #' @param verbose_IRLS Optional. A logical value indicating whether or not
-#' values of the criterion optimized by IRLS should be printed at each step of
-#' the EM algorithm.
+#'   values of the criterion optimized by IRLS should be printed at each step of
+#'   the EM algorithm.
 #' @return EM returns an object of class [ModelRHLP][ModelRHLP].
 #' @seealso [ModelRHLP], [ParamRHLP], [StatRHLP]
 #' @export
@@ -52,7 +53,7 @@ emRHLP <- function(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic", "
   while (try_EM < n_tries) {
     try_EM <- try_EM + 1
 
-    if (verbose) {
+    if (n_tries > 1 && verbose) {
       cat(paste0("EM try number: ", try_EM, "\n\n"))
     }
     time <- Sys.time()
@@ -112,15 +113,15 @@ emRHLP <- function(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic", "
 
       best_loglik <- stat$loglik
     }
-    if (n_tries > 1) {
-      cat(paste0("Max value of the log-likelihood: ", stat$loglik, "\n"))
+    if (n_tries > 1 && verbose) {
+      cat(paste0("Max value of the log-likelihood: ", stat$loglik, "\n\n"))
     }
   }
 
   # Computation of c_ig the hard partition of the curves and klas
   statSolution$MAP()
 
-  if (n_tries > 1) {
+  if (n_tries > 1 && verbose) {
     cat(paste0("Max value of the log-likelihood: ", statSolution$loglik, "\n"))
   }
 

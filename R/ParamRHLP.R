@@ -3,35 +3,35 @@
 #' ParamRHLP contains all the parameters of a RHLP model.
 #'
 #' @field X Numeric vector of length \emph{m} representing the covariates/inputs
-#' \eqn{x_{1},\dots,x_{m}}.
+#'   \eqn{x_{1},\dots,x_{m}}.
 #' @field Y Numeric vector of length \emph{m} representing the observed
-#' response/output \eqn{y_{1},\dots,y_{m}}.
+#'   response/output \eqn{y_{1},\dots,y_{m}}.
 #' @field m Numeric. Length of the response/output vector `Y`.
 #' @field K The number of regimes (RHLP components).
 #' @field p The order of the polynomial regression.
 #' @field q The dimension of the logistic regression. For the purpose of
-#' segmentation, it must be set to 1.
+#'   segmentation, it must be set to 1.
 #' @field variance_type Character indicating if the model is homoskedastic
-#' (`variance_type = "homoskedastic"`) or heteroskedastic
-#' (`variance_type = "heteroskedastic"`). By default the model is
-#' heteroskedastic.
-#' @field W Parameters of the logistic process.
-#' \eqn{\boldsymbol{W} = (\boldsymbol{w}_{1},\dots,\boldsymbol{w}_{K-1})}{W = (w_{1},\dots,w_{K-1})}
-#' is a matrix of dimension \eqn{(q + 1, K - 1)}, with `q` the order of
-#' the logistic regression. `q` is fixed to 1 by default.
-#' @field beta Parameters of the polynomial regressions.
-#' \eqn{\boldsymbol{\beta} = (\boldsymbol{\beta}_{1},\dots,\boldsymbol{\beta}_{K})}{\beta = (\beta_{1},\dots,\beta_{K})}
-#' is a matrix of dimension \eqn{(p + 1, K)}, with `p` the order of the
-#' polynomial regression. `p` is fixed to 3 by default.
+#'   (`variance_type = "homoskedastic"`) or heteroskedastic (`variance_type =
+#'   "heteroskedastic"`). By default the model is heteroskedastic.
+#' @field W Parameters of the logistic process. \eqn{\boldsymbol{W} =
+#'   (\boldsymbol{w}_{1},\dots,\boldsymbol{w}_{K-1})}{W = (w_{1},\dots,w_{K-1})}
+#'   is a matrix of dimension \eqn{(q + 1, K - 1)}, with `q` the order of the
+#'   logistic regression. `q` is fixed to 1 by default.
+#' @field beta Parameters of the polynomial regressions. \eqn{\boldsymbol{\beta}
+#'   = (\boldsymbol{\beta}_{1},\dots,\boldsymbol{\beta}_{K})}{\beta =
+#'   (\beta_{1},\dots,\beta_{K})} is a matrix of dimension \eqn{(p + 1, K)},
+#'   with `p` the order of the polynomial regression. `p` is fixed to 3 by
+#'   default.
 #' @field sigma2 The variances for the `K` regimes. If RHLP model is
-#' heteroskedastic (`variance_type = "heteroskedastic"`) then `sigma2` is a
-#' matrix of size \eqn{(K, 1)} (otherwise RHLP model is homoskedastic
-#' (`variance_type = "homoskedastic"`) and `sigma2` is a matrix
-#' of size \eqn{(1, 1)}).
-#' @field nu The degree of freedom of the RHLP model representing the
-#' complexity of the model.
+#'   heteroskedastic (`variance_type = "heteroskedastic"`) then `sigma2` is a
+#'   matrix of size \eqn{(K, 1)} (otherwise RHLP model is homoskedastic
+#'   (`variance_type = "homoskedastic"`) and `sigma2` is a matrix of size
+#'   \eqn{(1, 1)}).
+#' @field nu The degree of freedom of the RHLP model representing the complexity
+#'   of the model.
 #' @field phi A list giving the regression design matrices for the polynomial
-#' and the logistic regressions.
+#'   and the logistic regressions.
 #' @export
 ParamRHLP <- setRefClass(
   "ParamRHLP",
@@ -66,9 +66,9 @@ ParamRHLP <- setRefClass(
       variance_type <<- variance_type
 
       if (variance_type == "homoskedastic") {
-        nu <<- (p + q + 3) * K - (q + 1) - (K - 1)
+        nu <<- (q + 1) * (K - 1) + (p + 1) * K + 1
       } else {
-        nu <<- (p + q + 3) * K - (q + 1)
+        nu <<- (q + 1) * (K - 1) + (p + 1) * K + K
       }
 
       W <<- matrix(0, p + 1, K - 1)

@@ -6,25 +6,28 @@
 \alias{ModelRHLP}
 \title{A Reference Class which represents a fitted RHLP model.}
 \description{
-ModelRHLP represents an estimated \link[=ModelRHLP]{RHLP} model.
+ModelRHLP represents an estimated RHLP model.
 }
 \section{Fields}{
 
 \describe{
-\item{\code{paramRHLP}}{A \link{ParamRHLP} object. It contains the estimated values of the parameters.}
+\item{\code{paramRHLP}}{A \link{ParamRHLP} object. It contains the estimated
+values of the parameters.}
 
-\item{\code{statRHLP}}{A \link{StatRHLP} object. It contains all the statistics associated to the RHLP model.}
+\item{\code{statRHLP}}{A \link{StatRHLP} object. It contains all the
+statistics associated to the RHLP model.}
 }}
 
 \section{Methods}{
 
 \describe{
-\item{\code{plot(what = c("regressors", "meancurve"))}}{Plot method.
+\item{\code{plot(what = c("regressors", "estimatedsignal"))}}{Plot method.
 \describe{
   \item{\code{what}}{The type of graph requested:
     \itemize{
-      \item "regressors"
-      \item "meancurve"
+      \item \code{"regressors" = } Polynomial regression components.
+      \item \code{"estimatedsignal" = } Estimated signal (Sum of the
+      polynomial components weighted by the logistic probabilities.
     }
   }
 }

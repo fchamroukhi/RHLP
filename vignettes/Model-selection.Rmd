@@ -67,5 +67,5 @@ selectedrhlp$summary()
 ```
 
 ```{r}
-selectedrhlp$plot(what = "meancurve")
+selectedrhlp$plot(what = "estimatedsignal")
 ```

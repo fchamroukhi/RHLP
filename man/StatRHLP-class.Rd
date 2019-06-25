@@ -11,25 +11,30 @@ StatRHLP contains all the statistics associated to a \link[=ParamRHLP]{RHLP} mod
 \section{Fields}{
 
 \describe{
-\item{\code{pi_ik}}{Matrix of size \eqn{(m, K)} representing the prior probabilities
-\eqn{\pi_{k}(x_{i}; \boldsymbol{\Psi}) = P(z_{i} = k | \boldsymbol{x}; \Psi)}{\pi_{k}(x_{i}; \Psi) = P(z_{i} = k | x; \Psi)}
-of the latent variable \eqn{z_{i}, i = 1,\dots,m}.}
+\item{\code{pi_ik}}{Matrix of size \eqn{(m, K)} representing the prior/logistic
+probabilities \eqn{\pi_{k}(x_{i}; \boldsymbol{\Psi}) = P(z_{i} = k |
+  \boldsymbol{x}; \Psi)}{\pi_{k}(x_{i}; \Psi) = P(z_{i} = k | x; \Psi)} of
+the latent variable \eqn{z_{i}, i = 1,\dots,m}.}
 
 \item{\code{z_ik}}{Hard segmentation logical matrix of dimension \eqn{(m, K)}
-obtained by the Maximum a posteriori (MAP) rule:
-\eqn{z\_ik = 1 \ \textrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{k} \
-\pi_{k}(x_{i}; \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
-arg max_k \pi_{k}(x_{i}; \Psi); 0 otherwise}, \eqn{k = 1,\dots,K}.}
+obtained by the Maximum a posteriori (MAP) rule: \eqn{z\_ik = 1 \
+  \textrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{k} \ \pi_{k}(x_{i};
+  \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik = arg max_k
+  \pi_{k}(x_{i}; \Psi); 0 otherwise}, \eqn{k = 1,\dots,K}.}
 
 \item{\code{klas}}{Column matrix of the labels issued from \code{z_ik}. Its elements are
 \eqn{klas(i) = k}, \eqn{k = 1,\dots,K}.}
 
+\item{\code{tau_ik}}{Matrix of size \eqn{(m, K)} giving the posterior probability
+that the observation \eqn{Y_{i}} originates from the \eqn{k}-th regression
+model.}
+
+\item{\code{polynomials}}{Matrix of size \eqn{(m, K)} giving the values of the
+estimated polynomial regression components.}
+
 \item{\code{Ex}}{Column matrix of dimension \emph{m}. \code{Ex} is the curve expectation
-: sum of the polynomial components \eqn{\boldsymbol{x}_{i} \times \beta_{k}}{x_{i} x \beta_{k}}
-weighted by the logistic probabilities \code{pi_ik}:
-\eqn{Ey(i) = \sum_{k = 1}^{K} pi\_ik \times \boldsymbol{x}_{i} \times \beta_{k}}{Ey(i) =
-\sum_{k=1}^K pi_ik x x_{i} x \betak}, with \eqn{\boldsymbol{x}_{i} = (1,x_{i},\dots,x_{i}^{q})}{x_{i} = (1,x_{i},\dots,x_{i}^{q})},
-\eqn{i = 1,\dots,m}.}
+(estimated signal): sum of the polynomial components weighted by the
+logistic probabilities \code{pi_ik}.}
 
 \item{\code{loglik}}{Numeric. Observed-data log-likelihood of the RHLP model.}
 
@@ -41,34 +46,23 @@ iteration.}
 \item{\code{stored_com_loglik}}{List. Stored values of the Complete log-likelihood
 at each EM iteration.}
 
-\item{\code{BIC}}{Numeric. Value of BIC (Bayesian Information Criterion). The
-formula is \eqn{BIC = loglik - nu \times \textrm{log}(m) / 2}{BIC = loglik - nu x log(m) / 2}
-with \code{nu} the degree of freedom of the RHLP model.}
+\item{\code{BIC}}{Numeric. Value of BIC (Bayesian Information Criterion).}
 
-\item{\code{ICL}}{Numeric. Value of ICL (Integrated Completed Likelihood).
-The formula is \eqn{ICL = com\_loglik - nu \times \textrm{log}(m) / 2}{ICL = com_loglik - nu x log(m) / 2}
-with \code{nu} the degree of freedom of the RHLP model.}
+\item{\code{ICL}}{Numeric. Value of ICL (Integrated Completed Likelihood).}
 
-\item{\code{AIC}}{Numeric. Value of AIC (Akaike Information Criterion).
-The formula is \eqn{AIC = loglik - nu}{AIC = loglik - nu}.}
-
-\item{\code{cpu_time}}{Numeric. Average computing time of a EM algorithm run.}
+\item{\code{AIC}}{Numeric. Value of AIC (Akaike Information Criterion).}
 
 \item{\code{log_piik_fik}}{Matrix of size \eqn{(m, K)} giving the values of the
-logarithm of the joint probability
-\eqn{P(y_{i}, \ z_{i} = k | \boldsymbol{x}, \boldsymbol{\Psi})}{P(y_{i}, z_{i} = k | x, \Psi)},
-\eqn{i = 1,\dots,m}.}
+logarithm of the joint probability \eqn{P(y_{i}, \ z_{i} = k |
+  \boldsymbol{x}, \boldsymbol{\Psi})}{P(y_{i}, z_{i} = k | x, \Psi)}, \eqn{i
+  = 1,\dots,m}.}
 
 \item{\code{log_sum_piik_fik}}{Column matrix of size \emph{m} giving the values of
-\eqn{\textrm{log} \sum_{k = 1}^{K} P(y_{i}, \ z_{i} = k | \boldsymbol{x}, \boldsymbol{\Psi})}{log \sum_{k = 1}^{K} P(y_{i}, z_{i} = k | x, \Psi)},
+\eqn{\textrm{log} \sum_{k = 1}^{K} P(y_{i}, \ z_{i} = k | \boldsymbol{x},
+  \boldsymbol{\Psi})}{log \sum_{k = 1}^{K} P(y_{i}, z_{i} = k | x, \Psi)},
 \eqn{i = 1,\dots,m}.}
 
-\item{\code{tau_ik}}{Matrix of size \eqn{(m, K)} giving the posterior probability that
-\eqn{Y_{i}} originates from the \eqn{k}-th regression model
-\eqn{P(z_{i} = k | \boldsymbol{x}, \boldsymbol{y}; \Psi))}{P(z_{i} = k | x, y; \Psi))}.}
-
-\item{\code{polynomials}}{Matrix of size \eqn{(m, K)} giving the values of
-\eqn{x_{i} \times \beta_{k}}{x_{i} x \beta_{k}}, \eqn{i = 1,\dots,m}.}
+\item{\code{cpu_time}}{Numeric. Average computing time of a EM algorithm run.}
 }}
 
 \section{Methods}{

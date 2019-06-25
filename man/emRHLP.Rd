@@ -17,32 +17,33 @@ response/output \eqn{y_{1},\dots,y_{m}}.}
 
 \item{K}{The number of regimes (RHLP components).}
 
-\item{p}{Optional. The order of the polynomial regression. By default, \code{p}
-is set at 3.}
+\item{p}{Optional. The order of the polynomial regression. By default, \code{p} is
+set at 3.}
 
-\item{q}{Optional. The dimension of the logistic regression. For the purpose of
-segmentation, it must be set to 1 (which is the default value).}
+\item{q}{Optional. The dimension of the logistic regression. For the purpose
+of segmentation, it must be set to 1 (which is the default value).}
 
 \item{variance_type}{Optional character indicating if the model is
 "homoskedastic" or "heteroskedastic". By default the model is
 "heteroskedastic".}
 
-\item{n_tries}{Optional. Number of runs of the EM algorithm.
-The solution providing the highest log-likelihood will be returned.
+\item{n_tries}{Optional. Number of runs of the EM algorithm. The solution
+providing the highest log-likelihood will be returned.
 
-If \code{n_tries} > 1, then for the first run, parameters are initialized
-by uniformly segmenting the data into K segments, and for the next runs,
-parameters are initialized by randomly segmenting the data into K contiguous
-segments.}
+If \code{n_tries} > 1, then for the first run, parameters are initialized by
+uniformly segmenting the data into K segments, and for the next runs,
+parameters are initialized by randomly segmenting the data into K
+contiguous segments.}
 
-\item{max_iter}{Optional. The maximum number of iterations for the EM algorithm.}
+\item{max_iter}{Optional. The maximum number of iterations for the EM
+algorithm.}
 
-\item{threshold}{Optional. A numeric value specifying the threshold for the relative
-difference of log-likelihood between two steps  of the EM as stopping
-criteria.}
+\item{threshold}{Optional. A numeric value specifying the threshold for the
+relative difference of log-likelihood between two steps of the EM as
+stopping criteria.}
 
-\item{verbose}{Optional. A logical value indicating whether or not values
-of the log-likelihood should be printed during EM iterations.}
+\item{verbose}{Optional. A logical value indicating whether or not values of
+the log-likelihood should be printed during EM iterations.}
 
 \item{verbose_IRLS}{Optional. A logical value indicating whether or not
 values of the criterion optimized by IRLS should be printed at each step of
@@ -52,8 +53,8 @@ the EM algorithm.}
 EM returns an object of class \link{ModelRHLP}.
 }
 \description{
-emRHLP is used to fit a RHLP model. The estimation method is performed by
-the Expectation-Maximization algorithm.
+emRHLP is used to fit a RHLP model. The estimation method is performed by the
+Expectation-Maximization algorithm.
 }
 \details{
 emRHLP function implements the EM algorithm. This function starts
