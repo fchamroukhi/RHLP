@@ -59,7 +59,7 @@ and the logistic regressions.}
 \item{\code{initParam(try_algo = 1)}}{Method to initialize parameters \code{W}, \code{beta} and
       \code{sigma2}.
 
-      If try_algo = 1 then \code{W}, \code{beta} and \code{sigma2} are
+      If \code{try_algo = 1} then \code{beta} and \code{sigma2} are
       initialized by segmenting  the time series \code{Y} uniformly into
       \code{K} contiguous segments. Otherwise, \code{W}, \code{beta} and
       \code{sigma2} are initialized by segmenting randomly the time series

@@ -71,7 +71,7 @@ logarithm of the joint probability \eqn{P(y_{i}, \ z_{i} = k |
 \item{\code{computeLikelihood(reg_irls)}}{Method to compute the log-likelihood. \code{reg_irls} is the value of
 the regularization part in the IRLS algorithm.}
 
-\item{\code{computeStats(paramRHLP, cpu_time_all)}}{Method used in the EM algorithm to compute statistics based on paramaters
+\item{\code{computeStats(paramRHLP, cpu_time_all)}}{Method used in the EM algorithm to compute statistics based on parameters
 provided by \code{paramRHLP}. It also calculates the average computing time
 of a single run of the EM algorithm.}
 

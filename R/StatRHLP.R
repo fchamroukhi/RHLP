@@ -110,7 +110,7 @@ StatRHLP <- setRefClass(
     },
 
     computeStats = function(paramRHLP, cpu_time_all) {
-      "Method used in the EM algorithm to compute statistics based on paramaters
+      "Method used in the EM algorithm to compute statistics based on parameters
       provided by \\code{paramRHLP}. It also calculates the average computing time
       of a single run of the EM algorithm."
       polynomials <<- paramRHLP$phi$XBeta %*% paramRHLP$beta
