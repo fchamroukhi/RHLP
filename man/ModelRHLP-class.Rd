@@ -11,10 +11,10 @@ ModelRHLP represents an estimated RHLP model.
 \section{Fields}{
 
 \describe{
-\item{\code{paramRHLP}}{A \link{ParamRHLP} object. It contains the estimated
+\item{\code{param}}{A \link{ParamRHLP} object. It contains the estimated
 values of the parameters.}
 
-\item{\code{statRHLP}}{A \link{StatRHLP} object. It contains all the
+\item{\code{stat}}{A \link{StatRHLP} object. It contains all the
 statistics associated to the RHLP model.}
 }}
 
@@ -25,9 +25,11 @@ statistics associated to the RHLP model.}
 \describe{
   \item{\code{what}}{The type of graph requested:
     \itemize{
-      \item \code{"regressors" = } Polynomial regression components.
-      \item \code{"estimatedsignal" = } Estimated signal (Sum of the
-      polynomial components weighted by the logistic probabilities.
+      \item \code{"regressors" = } Polynomial regression components
+        (fields \code{polynomials} and \code{pi_ik} of class
+        \link{StatRHLP}).
+      \item \code{"estimatedsignal" = } Estimated signal (fields
+      \code{Ex} and \code{klas} of class \link{StatRHLP}).
     }
   }
 }

@@ -102,14 +102,6 @@ emRHLP <- function(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic", "
     if (stat$loglik > best_loglik) {
       statSolution <- stat$copy()
       paramSolution <- param$copy()
-      if (param$K == 1) {
-        statSolution$tau_ik <- matrix(stat$tau_ik, nrow = param$m, ncol = 1)
-        statSolution$pi_ik <- matrix(stat$pi_ik, nrow = param$m, ncol = 1)
-      }
-      else{
-        statSolution$tau_ik <- stat$tau_ik[1:param$m, ]
-        statSolution$pi_ik <- stat$pi_ik[1:param$m, ]
-      }
 
       best_loglik <- stat$loglik
     }
@@ -128,5 +120,5 @@ emRHLP <- function(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic", "
   # Finish the computation of statistics
   statSolution$computeStats(paramSolution, cpu_time_all)
 
-  return(ModelRHLP$new(paramRHLP = paramSolution, statRHLP = statSolution))
+  return(ModelRHLP$new(param = paramSolution, stat = statSolution))
 }

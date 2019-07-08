@@ -92,6 +92,7 @@ ParamRHLP <- setRefClass(
       \\code{K} contiguous segments. Otherwise, \\code{W}, \\code{beta} and
       \\code{sigma2} are initialized by segmenting randomly the time series
       \\code{Y} into \\code{K} segments."
+
       if (try_algo == 1) { # Uniform segmentation into K contiguous segments, and then a regression
 
         # Initialization of W
@@ -162,8 +163,9 @@ ParamRHLP <- setRefClass(
 
     MStep = function(statRHLP, verbose_IRLS) {
       "Method which implements the M-step of the EM algorithm to learn the
-      parameters of the RHLP model based on statistics provided by
-      \\code{statRHLP} (which contains the E-step)."
+      parameters of the RHLP model based on statistics provided by the object
+      \\code{statRHLP} of class \\link{StatRHLP} (which contains the E-step)."
+
       # Maximization w.r.t betak and sigmak (the variances)
       if (variance_type == "homoskedastic") {
         s = 0

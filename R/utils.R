@@ -10,10 +10,12 @@ designmatrix = function(x, p, q = NULL, n = 1) {
     X[, i + 1] <- x ^ i
   }
 
-  XBeta <- X[, 1:(p + 1)] # Design matrix for Beta (the polynomial regressions)
+  XBeta <- X[, 1:(p + 1)]
+  # design matrix for Beta (the polynomial regressions)
   if (!is.null(q)) {
     Xw <- X[, 1:(q + 1)]
-    Xw <- repmat(Xw, n, 1) # Design matrix for w (the logistic regression)
+    Xw <- repmat(Xw, n, 1)
+    # design matrix for w (the logistic regression)
   } else {
     Xw <- NULL
   }
@@ -93,7 +95,7 @@ normalize <- function(A, dim) {
     s <- z + (z == 0)
     M <- A / s
   } else if (dim == 1) {
-    # Normalize each column
+    # normalize each column
     z <- colSums(A)
     s <- z + (z == 0)
     M <- A / matrix(s, nrow = dim(A)[1], ncol = length(s), byrow = TRUE)
