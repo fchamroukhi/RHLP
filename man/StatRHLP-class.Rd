@@ -61,8 +61,6 @@ logarithm of the joint probability \eqn{P(y_{i}, \ z_{i} = k |
 \eqn{\textrm{log} \sum_{k = 1}^{K} P(y_{i}, \ z_{i} = k | \boldsymbol{x},
   \boldsymbol{\Psi})}{log \sum_{k = 1}^{K} P(y_{i}, z_{i} = k | x, \Psi)},
 \eqn{i = 1,\dots,m}.}
-
-\item{\code{cpu_time}}{Numeric. Average computing time of a EM algorithm run.}
 }}
 
 \section{Methods}{
@@ -71,10 +69,9 @@ logarithm of the joint probability \eqn{P(y_{i}, \ z_{i} = k |
 \item{\code{computeLikelihood(reg_irls)}}{Method to compute the log-likelihood. \code{reg_irls} is the value of
 the regularization part in the IRLS algorithm.}
 
-\item{\code{computeStats(paramRHLP, cpu_time_all)}}{Method used in the EM algorithm to compute statistics based on parameters
-provided by the object \code{paramRHLP} of class \link{ParamRHLP}. It
-also calculates the average computing time of a single run of the EM
-algorithm.}
+\item{\code{computeStats(paramRHLP)}}{Method used in the EM algorithm to compute statistics based on
+parameters provided by the object \code{paramRHLP} of class
+\link{ParamRHLP}.}
 
 \item{\code{EStep(paramRHLP)}}{Method used in the EM algorithm to update statistics based on parameters
 provided by the object \code{paramRHLP} of class \link{ParamRHLP}
@@ -83,9 +80,9 @@ provided by the object \code{paramRHLP} of class \link{ParamRHLP}
 \item{\code{MAP()}}{MAP calculates values of the fields \code{z_ik} and \code{klas}
       by applying the Maximum A Posteriori Bayes allocation rule.
 
-      \eqn{z_{ik} = 1 \     extrm{if} \ k = \textrm{arg} \ \textrm{max}_{s} \
-      \pi_{s}(x_{i}; \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{z_{ik} = 1 if z_ik =
-      arg max_{s} \pi_{k}(x_{i}; \Psi); 0 otherwise}}
+      \eqn{z_{ik} = 1 \     extrm{if} \ k = \textrm{arg} \ \textrm{max}_{s}
+      \ \pi_{s}(x_{i}; \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{
+      z_{ik} = 1 if z_ik = arg max_{s} \pi_{k}(x_{i}; \Psi); 0 otherwise}}
 }}
 
 \seealso{

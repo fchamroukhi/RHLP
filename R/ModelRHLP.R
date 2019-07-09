@@ -16,7 +16,7 @@ ModelRHLP <- setRefClass(
   ),
   methods = list(
 
-    plot = function(what = c("regressors", "estimatedsignal")) {
+    plot = function(what = c("regressors", "estimatedsignal"), ...) {
       "Plot method.
       \\describe{
         \\item{\\code{what}}{The type of graph requested:
@@ -28,12 +28,13 @@ ModelRHLP <- setRefClass(
             \\code{Ex} and \\code{klas} of class \\link{StatRHLP}).
           }
         }
+        \\item{\\code{\\dots}}{Other graphics parameters.}
       }
       By default, all the above graphs are produced."
 
       what <- match.arg(what, several.ok = TRUE)
 
-      oldpar <- par()[c("mfrow", "mai", "mgp")]
+      oldpar <- par(no.readonly = TRUE)
       on.exit(par(oldpar), add = TRUE)
 
       yaxislim <- c(mean(param$Y) - 2 * sd(param$Y), mean(param$Y) + 2 * sd(param$Y))
@@ -41,21 +42,21 @@ ModelRHLP <- setRefClass(
       if (any(what == "regressors")) {
         # Data, regressors, and segmentation
         par(mfrow = c(2, 1), mai = c(0.6, 1, 0.5, 0.5), mgp = c(2, 1, 0))
-        plot.default(param$X, param$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y")
+        plot.default(param$X, param$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y", ...)
         title(main = "Time series, RHLP regimes and process probabilities")
         colorsvec = rainbow(param$K)
         for (k in 1:param$K) {
           index <- (stat$klas == k)
           polynomials <- stat$polynomials[index, k]
-          lines(param$X, stat$polynomials[, k], col = colorsvec[k], lty = "dotted", lwd = 1.5)
-          lines(param$X[index], col = colorsvec[k], polynomials, lwd = 1.5)
+          lines(param$X, stat$polynomials[, k], col = colorsvec[k], lty = "dotted", lwd = 1.5, ...)
+          lines(param$X[index], col = colorsvec[k], polynomials, lwd = 1.5, ...)
         }
 
         # Probablities of the hidden process (segmentation)
-        plot.default(param$X, stat$pi_ik[, 1], type = "l", xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)), col = colorsvec[1], lwd = 1.5, ylim = c(0, 1))
+        plot.default(param$X, stat$pi_ik[, 1], type = "l", xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)), col = colorsvec[1], lwd = 1.5, ylim = c(0, 1), ...)
         if (param$K > 1) {
           for (k in 2:param$K) {
-            lines(param$X, stat$pi_ik[, k], col = colorsvec[k], lwd = 1.5, ylim = c(0, 1))
+            lines(param$X, stat$pi_ik[, k], col = colorsvec[k], lwd = 1.5, ylim = c(0, 1), ...)
           }
         }
       }
@@ -63,26 +64,28 @@ ModelRHLP <- setRefClass(
       if (any(what == "estimatedsignal")) {
         # Data, regression model, and segmentation
         par(mfrow = c(2, 1), mai = c(0.6, 1, 0.5, 0.5), mgp = c(2, 1, 0))
-        plot.default(param$X, param$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y")
-        lines(param$X, stat$Ex, col = "red", lwd = 1.5)
+        plot.default(param$X, param$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y", ...)
+        lines(param$X, stat$Ex, col = "red", lwd = 1.5, ...)
         title(main = "Time series, estimated RHLP model, and segmentation")
 
         # Transition time points
         tk <- which(diff(stat$klas) != 0)
         for (i in 1:length(tk)) {
-          abline(v = param$X[tk[i]], col = "red", lty = "dotted", lwd = 1.5)
+          abline(v = param$X[tk[i]], col = "red", lty = "dotted", lwd = 1.5, ...)
         }
 
         # Probablities of the hidden process (segmentation)
-        plot.default(param$X, stat$klas, type = "l", xlab = "x", ylab = "Estimated class labels", col = "red", lwd = 1.5, yaxt = "n")
-        axis(side = 2, at = 1:param$K)
+        plot.default(param$X, stat$klas, type = "l", xlab = "x", ylab = "Estimated class labels", col = "red", lwd = 1.5, yaxt = "n", ...)
+        axis(side = 2, at = 1:param$K, ...)
       }
     },
 
-    summary = function() {
-      "Summary method."
-
-      digits = getOption("digits")
+    summary = function(digits = getOption("digits")) {
+      "Summary method.
+      \\describe{
+        \\item{\\code{digits}}{The number of significant digits to use when
+          printing.}
+      }"
 
       title <- paste("Fitted RHLP model")
       txt <- paste(rep("-", min(nchar(title) + 4, getOption("width"))), collapse = "")

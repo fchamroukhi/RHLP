@@ -38,7 +38,6 @@
 #'   \eqn{\textrm{log} \sum_{k = 1}^{K} P(y_{i}, \ z_{i} = k | \boldsymbol{x},
 #'   \boldsymbol{\Psi})}{log \sum_{k = 1}^{K} P(y_{i}, z_{i} = k | x, \Psi)},
 #'   \eqn{i = 1,\dots,m}.
-#' @field cpu_time Numeric. Average computing time of a EM algorithm run.
 #' @seealso [ParamRHLP]
 #' @export
 StatRHLP <- setRefClass(
@@ -55,7 +54,6 @@ StatRHLP <- setRefClass(
     BIC = "numeric",
     ICL = "numeric",
     AIC = "numeric",
-    cpu_time = "numeric",
     log_piik_fik = "matrix",
     log_sum_piik_fik = "matrix",
     tau_ik = "matrix",
@@ -76,7 +74,6 @@ StatRHLP <- setRefClass(
       BIC <<- -Inf
       ICL <<- -Inf
       AIC <<- -Inf
-      cpu_time <<- Inf
       log_piik_fik <<- matrix(0, paramRHLP$m, paramRHLP$K)
       log_sum_piik_fik <<- matrix(NA, paramRHLP$m, 1)
       tau_ik <<- matrix(0, paramRHLP$m, paramRHLP$K)
@@ -88,9 +85,9 @@ StatRHLP <- setRefClass(
       "MAP calculates values of the fields \\code{z_ik} and \\code{klas}
       by applying the Maximum A Posteriori Bayes allocation rule.
 
-      \\eqn{z_{ik} = 1 \\ \textrm{if} \\ k = \\textrm{arg} \\ \\textrm{max}_{s} \\
-      \\pi_{s}(x_{i}; \\boldsymbol{\\Psi});\\ 0 \\ \\textrm{otherwise}}{z_{ik} = 1 if z_ik =
-      arg max_{s} \\pi_{k}(x_{i}; \\Psi); 0 otherwise}"
+      \\eqn{z_{ik} = 1 \\ \textrm{if} \\ k = \\textrm{arg} \\ \\textrm{max}_{s}
+      \\ \\pi_{s}(x_{i}; \\boldsymbol{\\Psi});\\ 0 \\ \\textrm{otherwise}}{
+      z_{ik} = 1 if z_ik = arg max_{s} \\pi_{k}(x_{i}; \\Psi); 0 otherwise}"
 
       N <- nrow(pi_ik)
       K <- ncol(pi_ik)
@@ -111,16 +108,13 @@ StatRHLP <- setRefClass(
 
     },
 
-    computeStats = function(paramRHLP, cpu_time_all) {
-      "Method used in the EM algorithm to compute statistics based on parameters
-      provided by the object \\code{paramRHLP} of class \\link{ParamRHLP}. It
-      also calculates the average computing time of a single run of the EM
-      algorithm."
+    computeStats = function(paramRHLP) {
+      "Method used in the EM algorithm to compute statistics based on
+      parameters provided by the object \\code{paramRHLP} of class
+      \\link{ParamRHLP}."
 
       polynomials <<- paramRHLP$phi$XBeta %*% paramRHLP$beta
       Ex <<- matrix(rowSums(pi_ik * polynomials))
-
-      cpu_time <<- mean(cpu_time_all)
 
       BIC <<- loglik - (paramRHLP$nu * log(paramRHLP$m) / 2)
       AIC <<- loglik - paramRHLP$nu

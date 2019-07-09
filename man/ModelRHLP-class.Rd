@@ -21,7 +21,7 @@ statistics associated to the RHLP model.}
 \section{Methods}{
 
 \describe{
-\item{\code{plot(what = c("regressors", "estimatedsignal"))}}{Plot method.
+\item{\code{plot(what = c("regressors", "estimatedsignal"), ...)}}{Plot method.
 \describe{
   \item{\code{what}}{The type of graph requested:
     \itemize{
@@ -32,10 +32,15 @@ statistics associated to the RHLP model.}
       \code{Ex} and \code{klas} of class \link{StatRHLP}).
     }
   }
+  \item{\code{\dots}}{Other graphics parameters.}
 }
 By default, all the above graphs are produced.}
 
-\item{\code{summary()}}{Summary method.}
+\item{\code{summary(digits = getOption("digits"))}}{Summary method.
+\describe{
+  \item{\code{digits}}{The number of significant digits to use when
+    printing.}
+}}
 }}
 
 \seealso{
