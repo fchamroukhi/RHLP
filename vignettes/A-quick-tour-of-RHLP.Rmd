@@ -31,7 +31,9 @@ library(RHLP)
 
 # Introduction
 
-**RHLP** is a R package for segmentation. It provides functions for parameter estimation via the EM algorithm. This document gives a quick tour of **RHLP** (version `r packageVersion("RHLP")`) functionalities. It was written in R Markdown, using the [knitr](https://cran.r-project.org/package=knitr) package for production. 
+**RHLP** is an R package for flexible and user-friendly probabilistic segmentation of time series 
+(or structured longitudinal data) with smooth and/or abrupt regime changes by a mixture 
+model-based regression approach with a hidden logistic process, fitted by the EM algorithm. This document gives a quick tour of **RHLP** (version `r packageVersion("RHLP")`) functionalities. It was written in R Markdown, using the [knitr](https://cran.r-project.org/package=knitr) package for production. 
 See `help(package="RHLP")` for further details and references provided by `citation("RHLP")`.
 
 # Load data

@@ -31,10 +31,10 @@ library(RHLP)
 
 # Introduction
 
-In this package, it is possible to select models based on criteria such as 
-**BIC** and **AIC**.
+In this package, it is possible to select an RHLP based on information criteria such as 
+**BIC**, **AIC** and **ICL**.
 
-The selection is done on two parameters which are:
+The selection can be done for the two folliwng parameters:
 
  * $K$: The number of regimes;
  * $p$: The order of the polyniomial regression.

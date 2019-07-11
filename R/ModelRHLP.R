@@ -19,18 +19,18 @@ ModelRHLP <- setRefClass(
     plot = function(what = c("regressors", "estimatedsignal"), ...) {
       "Plot method.
       \\describe{
-        \\item{\\code{what}}{The type of graph requested:
-          \\itemize{
-            \\item \\code{\"regressors\" = } Polynomial regression components
-              (fields \\code{polynomials} and \\code{pi_ik} of class
-              \\link{StatRHLP}).
-            \\item \\code{\"estimatedsignal\" = } Estimated signal (fields
-            \\code{Ex} and \\code{klas} of class \\link{StatRHLP}).
-          }
-        }
-        \\item{\\code{\\dots}}{Other graphics parameters.}
+      \\item{\\code{what}}{The type of graph requested:
+      \\itemize{
+      \\item \\code{\"regressors\" = } Polynomial regression components
+      (fields \\code{polynomials} and \\code{pi_ik} of class
+      \\link{StatRHLP}).
+      \\item \\code{\"estimatedsignal\" = } Estimated signal (fields
+      \\code{Ex} and \\code{klas} of class \\link{StatRHLP}).
       }
-      By default, all the above graphs are produced."
+      }
+      \\item{\\code{\\dots}}{Other graphics parameters.}
+      }
+      By default, all the graphs mentioned above are produced."
 
       what <- match.arg(what, several.ok = TRUE)
 
@@ -78,13 +78,13 @@ ModelRHLP <- setRefClass(
         plot.default(param$X, stat$klas, type = "l", xlab = "x", ylab = "Estimated class labels", col = "red", lwd = 1.5, yaxt = "n", ...)
         axis(side = 2, at = 1:param$K, ...)
       }
-    },
+      },
 
     summary = function(digits = getOption("digits")) {
       "Summary method.
       \\describe{
-        \\item{\\code{digits}}{The number of significant digits to use when
-          printing.}
+      \\item{\\code{digits}}{The number of significant digits to use when
+      printing.}
       }"
 
       title <- paste("Fitted RHLP model")
