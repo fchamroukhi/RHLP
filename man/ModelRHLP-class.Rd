@@ -14,8 +14,8 @@ ModelRHLP represents an estimated RHLP model.
 \item{\code{param}}{A \link{ParamRHLP} object. It contains the estimated
 values of the parameters.}
 
-\item{\code{stat}}{A \link{StatRHLP} object. It contains all the
-statistics associated to the RHLP model.}
+\item{\code{stat}}{A \link{StatRHLP} object. It contains all the statistics
+associated to the RHLP model.}
 }}
 
 \section{Methods}{
@@ -34,7 +34,7 @@ statistics associated to the RHLP model.}
   }
   \item{\code{\dots}}{Other graphics parameters.}
 }
-By default, all the above graphs are produced.}
+By default, all the graphs mentioned above are produced.}
 
 \item{\code{summary(digits = getOption("digits"))}}{Summary method.
 \describe{
