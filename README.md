@@ -1,11 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-## Overview
-
 <!-- badges: start -->
 
 <!-- badges: end -->
+
+## Overview
 
 Flexible and user-friendly probabilistic **segmentation** of time series
 with smooth and/or abrupt **regime changes** by a **mixture
@@ -14,8 +14,8 @@ by the EM algorithm.
 
 ## Installation
 
-You can install the development version of RHLP from
-[GitHub](https://github.com/) with:
+You can install the RHLP package from [GitHub](https://github.com/)
+with:
 
 ``` r
 # install.packages("devtools")
@@ -58,8 +58,6 @@ verbose_IRLS <- FALSE
 
 rhlp <- emRHLP(toydataset$x, toydataset$y, K, p, q, 
                    variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
-#> EM try number: 1
-#> 
 #> EM: Iteration : 1 || log-likelihood : -2119.27308534609
 #> EM: Iteration : 2 || log-likelihood : -1149.01040321999
 #> EM: Iteration : 3 || log-likelihood : -1118.20384281234
@@ -124,4 +122,4 @@ rhlp$summary()
 rhlp$plot()
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-5-2.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-5-2.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-5-3.png" style="display: block; margin: auto;" />

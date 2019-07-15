@@ -12,10 +12,11 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-"
 )
 ```
-## Overview
 
 <!-- badges: start -->
 <!-- badges: end -->
+
+## Overview
 
 Flexible and user-friendly probabilistic **segmentation** of time series with 
 smooth and/or abrupt **regime changes** by a **mixture model-based** regression approach 
