@@ -2,7 +2,7 @@
 % Please edit documentation in R/emRHLP.R
 \name{emRHLP}
 \alias{emRHLP}
-\title{emRHLP implemens the EM algorithm to fit a RHLP model.}
+\title{emRHLP implements the EM algorithm to fit a RHLP model.}
 \usage{
 emRHLP(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic",
   "homoskedastic"), n_tries = 1, max_iter = 1500, threshold = 1e-06,
@@ -64,6 +64,16 @@ the E-Step (method of the class \link{StatRHLP}) and the M-Step
 (method of the class \link{ParamRHLP}) until convergence (until the
 relative variation of log-likelihood between two steps of the EM algorithm
 is less than the \code{threshold} parameter).
+}
+\examples{
+data(toydataset)
+
+rhlp <- emRHLP(toydataset$x, toydataset$y, K = 3, p = 1, verbose = TRUE)
+
+rhlp$summary()
+
+rhlp$plot()
+
 }
 \seealso{
 \link{ModelRHLP}, \link{ParamRHLP}, \link{StatRHLP}
