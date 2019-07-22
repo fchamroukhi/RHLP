@@ -16,13 +16,13 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-## Overview
+# Overview
 
 Flexible and user-friendly probabilistic **segmentation** of time series with 
-smooth and/or abrupt **regime changes** by a **mixture model-based** regression approach 
-with a hidden logistic process, fitted by the EM algorithm.
+smooth and/or abrupt **regime changes** by a **mixture model-based** regression
+approach with a hidden logistic process, fitted by the EM algorithm.
 
-## Installation
+# Installation
 
 You can install the RHLP package from [GitHub](https://github.com/) with:
 
@@ -46,11 +46,14 @@ Use the following command to display vignettes:
 browseVignettes("RHLP")
 ```
 
-## Usage
+# Usage
 
 ```{r, message = FALSE}
 library(RHLP)
+```
 
+```{r, message = FALSE}
+# Application to a toy data set
 data("toydataset")
 
 K <- 5 # Number of regimes (mixture components)
@@ -70,4 +73,54 @@ rhlp <- emRHLP(toydataset$x, toydataset$y, K, p, q,
 rhlp$summary()
 
 rhlp$plot()
+```
+
+```{r, message = FALSE}
+# Application to a real data set
+data("realdataset")
+
+K <- 5 # Number of regimes (mixture components)
+p <- 3 # Dimension of beta (order of the polynomial regressors)
+q <- 1 # Dimension of w (order of the logistic regression: to be set to 1 for segmentation)
+variance_type <- "heteroskedastic" # "heteroskedastic" or "homoskedastic" model
+
+n_tries <- 1
+max_iter = 1500
+threshold <- 1e-6
+verbose <- FALSE
+verbose_IRLS <- FALSE
+
+rhlp <- emRHLP(realdataset$x, realdataset$y2, K, p, q, 
+               variance_type, n_tries, max_iter, threshold, 
+               verbose, verbose_IRLS)
+
+rhlp$summary()
+
+rhlp$plot()
+```
+
+# Model selection
+
+In this package, it is possible to select models based on information criteria 
+such as **BIC**, **AIC** and **ICL**.
+
+The selection can be done for the two following parameters:
+
+ * **K**: The number of regimes;
+ * **p**: The order of the polynomial regression.
+
+Let's select a RHLP model for the following time series **Y**:
+
+```{r, message = FALSE}
+data("toydataset")
+x = toydataset$x
+y = toydataset$y
+
+plot(x, y, type = "l", xlab = "x", ylab = "Y")
+```
+
+```{r, message = FALSE}
+selectedrhlp <- selectRHLP(X = x, Y = y, Kmin = 2, Kmax = 6, pmin = 0, pmax = 3)
+
+selectedrhlp$plot(what = "estimatedsignal")
 ```

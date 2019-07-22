@@ -5,14 +5,14 @@
 
 <!-- badges: end -->
 
-## Overview
+# Overview
 
 Flexible and user-friendly probabilistic **segmentation** of time series
 with smooth and/or abrupt **regime changes** by a **mixture
 model-based** regression approach with a hidden logistic process, fitted
 by the EM algorithm.
 
-## Installation
+# Installation
 
 You can install the RHLP package from [GitHub](https://github.com/)
 with:
@@ -38,11 +38,14 @@ Use the following command to display vignettes:
 browseVignettes("RHLP")
 ```
 
-## Usage
+# Usage
 
 ``` r
 library(RHLP)
+```
 
+``` r
+# Application to a toy data set
 data("toydataset")
 
 K <- 5 # Number of regimes (mixture components)
@@ -122,4 +125,90 @@ rhlp$summary()
 rhlp$plot()
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-5-2.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-5-3.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-6-2.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-6-3.png" style="display: block; margin: auto;" />
+
+``` r
+# Application to a real data set
+data("realdataset")
+
+K <- 5 # Number of regimes (mixture components)
+p <- 3 # Dimension of beta (order of the polynomial regressors)
+q <- 1 # Dimension of w (order of the logistic regression: to be set to 1 for segmentation)
+variance_type <- "heteroskedastic" # "heteroskedastic" or "homoskedastic" model
+
+n_tries <- 1
+max_iter = 1500
+threshold <- 1e-6
+verbose <- FALSE
+verbose_IRLS <- FALSE
+
+rhlp <- emRHLP(realdataset$x, realdataset$y2, K, p, q, 
+               variance_type, n_tries, max_iter, threshold, 
+               verbose, verbose_IRLS)
+
+rhlp$summary()
+#> ---------------------
+#> Fitted RHLP model
+#> ---------------------
+#> 
+#> RHLP model with K = 5 components:
+#> 
+#>  log-likelihood nu       AIC       BIC       ICL
+#>       -1946.213 33 -1979.213 -2050.683 -2050.449
+#> 
+#> Clustering table (Number of observations in each regimes):
+#> 
+#>   1   2   3   4   5 
+#>  16 129 180 111 126 
+#> 
+#> Regression coefficients:
+#> 
+#>     Beta(K = 1) Beta(K = 2) Beta(K = 3) Beta(K = 4) Beta(K = 5)
+#> 1      2187.539   330.05723   1508.2809 -13446.7332  6417.62830
+#> X^1  -15032.659  -107.79782  -1648.9562  11321.4509 -3571.94090
+#> X^2  -56433.432    14.40154    786.5723  -3062.2825   699.55894
+#> X^3  494014.670    56.88016   -118.0693    272.7844   -45.42922
+#> 
+#> Variances:
+#> 
+#>  Sigma2(K = 1) Sigma2(K = 2) Sigma2(K = 3) Sigma2(K = 4) Sigma2(K = 5)
+#>       8924.363      49.22616       78.2758      105.6606      15.66317
+
+rhlp$plot()
+```
+
+<img src="man/figures/README-unnamed-chunk-7-1.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-7-2.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-7-3.png" style="display: block; margin: auto;" />
+
+# Model selection
+
+In this package, it is possible to select models based on information
+criteria such as **BIC**, **AIC** and **ICL**.
+
+The selection can be done for the two following parameters:
+
+  - **K**: The number of regimes;
+  - **p**: The order of the polynomial regression.
+
+Let’s select a RHLP model for the following time series **Y**:
+
+``` r
+data("toydataset")
+x = toydataset$x
+y = toydataset$y
+
+plot(x, y, type = "l", xlab = "x", ylab = "Y")
+```
+
+<img src="man/figures/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+
+``` r
+selectedrhlp <- selectRHLP(X = x, Y = y, Kmin = 2, Kmax = 6, pmin = 0, pmax = 3)
+#> The RHLP model selected via the "BIC" has K = 5 regimes 
+#>  and the order of the polynomial regression is p = 0.
+#> BIC = -1041.40789532438
+#> AIC = -1000.84239591291
+
+selectedrhlp$plot(what = "estimatedsignal")
+```
+
+<img src="man/figures/README-unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
