@@ -66,14 +66,13 @@ relative variation of log-likelihood between two steps of the EM algorithm
 is less than the \code{threshold} parameter).
 }
 \examples{
-data(toydataset)
+data(univtoydataset)
 
-rhlp <- emRHLP(toydataset$x, toydataset$y, K = 3, p = 1, verbose = TRUE)
+rhlp <- emRHLP(univtoydataset$x, univtoydataset$y, K = 3, p = 1, verbose = TRUE)
 
 rhlp$summary()
 
 rhlp$plot()
-
 }
 \seealso{
 \link{ModelRHLP}, \link{ParamRHLP}, \link{StatRHLP}

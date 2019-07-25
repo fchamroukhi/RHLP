@@ -47,9 +47,9 @@ By default, all the graphs mentioned above are produced.}
 }}
 
 \examples{
-data(toydataset)
+data(univtoydataset)
 
-rhlp <- emRHLP(toydataset$x, toydataset$y, K = 3, p = 1, verbose = TRUE)
+rhlp <- emRHLP(univtoydataset$x, univtoydataset$y, K = 3, p = 1, verbose = TRUE)
 
 # rhlp is a ModelMHMMR object. It contains some methods such as 'summary' and 'plot'
 rhlp$summary()
@@ -62,7 +62,6 @@ rhlp$stat$loglik
 
 # Parameters of the polynomial regressions:
 rhlp$param$beta
-
 }
 \seealso{
 \link{ParamRHLP}, \link{StatRHLP}
