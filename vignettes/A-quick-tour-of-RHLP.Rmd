@@ -47,6 +47,8 @@ See `help(package="RHLP")` for further details and references provided by
 
 ```{r}
 data("toydataset")
+x <- toydataset$x
+y <- toydataset$y
 ```
 
 # Set up RHLP model parameters
@@ -71,8 +73,8 @@ verbose_IRLS <- FALSE
 # Estimation
 
 ```{r}
-rhlp <- emRHLP(toydataset$x, toydataset$y, K, p, q, 
-                   variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
+rhlp <- emRHLP(X = x, Y = y, K, p, q, variance_type, n_tries, 
+               max_iter, threshold, verbose, verbose_IRLS)
 ```
 
 # Summary

@@ -47,9 +47,11 @@ By default, all the graphs mentioned above are produced.}
 }}
 
 \examples{
-data(univtoydataset)
+data(toydataset)
+x <- toydataset$x
+y <- toydataset$y
 
-rhlp <- emRHLP(univtoydataset$x, univtoydataset$y, K = 3, p = 1, verbose = TRUE)
+rhlp <- emRHLP(X = x, Y = y, K = 3, p = 1, verbose = TRUE)
 
 # rhlp is a ModelMHMMR object. It contains some methods such as 'summary' and 'plot'
 rhlp$summary()

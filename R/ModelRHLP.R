@@ -10,9 +10,11 @@
 #' @export
 #'
 #' @examples
-#' data(univtoydataset)
+#' data(toydataset)
+#' x <- toydataset$x
+#' y <- toydataset$y
 #'
-#' rhlp <- emRHLP(univtoydataset$x, univtoydataset$y, K = 3, p = 1, verbose = TRUE)
+#' rhlp <- emRHLP(X = x, Y = y, K = 3, p = 1, verbose = TRUE)
 #'
 #' # rhlp is a ModelMHMMR object. It contains some methods such as 'summary' and 'plot'
 #' rhlp$summary()
@@ -144,7 +146,7 @@ ModelRHLP <- setRefClass(
       }
 
       betas <- data.frame(param$beta, row.names = row.names)
-      colnames(betas) <- sapply(1:param$K, function(x) paste0("Beta(K = ", x, ")"))
+      colnames(betas) <- sapply(1:param$K, function(x) paste0("Beta(k = ", x, ")"))
       print(betas, digits = digits)
 
       cat(paste0(ifelse(param$variance_type == "homoskedastic", "\n\n",
@@ -154,7 +156,7 @@ ModelRHLP <- setRefClass(
         colnames(sigma2) = "Sigma2"
         print(sigma2, digits = digits, row.names = FALSE)
       } else {
-        colnames(sigma2) = sapply(1:param$K, function(x) paste0("Sigma2(K = ", x, ")"))
+        colnames(sigma2) = sapply(1:param$K, function(x) paste0("Sigma2(k = ", x, ")"))
         print(sigma2, digits = digits, row.names = FALSE)
       }
 
